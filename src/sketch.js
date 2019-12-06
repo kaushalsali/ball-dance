@@ -44,7 +44,7 @@ function setup() {
     
     // Add Balls     
     for (let i=0; i<numBalls; i++) {
-	balls[i] = new Ball(random(0, width), random(0, height-150), 50, 200);
+	balls[i] = new Ball(random(0, width), random(0, height-150), 40, 200);
 	// balls[i] = new Ball(random(0, width), random(0, height-150), random(10,50), 200);
 	World.add(engine.world, balls[i].body);
     }

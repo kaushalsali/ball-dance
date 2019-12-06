@@ -7,8 +7,8 @@ class Ball {
 	this.radius = radius;
 	
 	this.trailHistory = [];
-	this.trailLength = 100;
-	this.minTrailRadius = radius / 3;
+	this.trailLength = 30;
+	this.minTrailRadius = radius / 2;
 	
 	this.body = Matter.Bodies.circle(startX, startY, radius, {
 	    friction: 0,
@@ -44,7 +44,7 @@ class Ball {
 
     calcTrailAlpha(i) {
 	let alphaIncFactor = this.alpha / (this.trailLength - 1);
-	return Math.pow(i * alphaIncFactor, 0.5);
+	return i * alphaIncFactor;
     }
 
     update() {
@@ -52,21 +52,27 @@ class Ball {
 	// let angle = this.getAngle();
 	this.trailHistory.push({x: pos.x, y: pos.y});
 
-	// this.trailHistory = this.trailHistory.slice(0, 10);
-	this.trailHistory = this.trailHistory.slice(this.trailHistory.length - this.trailLength, this.trailHistory.length);
+	if (this.trailHistory.length > this.trailLength)
+	    this.trailHistory.shift();
+	
+	// this.trailHistory.splice(this.trailHistory.length - this.trailLength);
+	// console.log(this.trailHistory.length);
 	
     }
     
     draw() {
-	let alphaIncFac = this.alpha / this.trailLength;
-	console.log(this.trailHistory.length)
+	
 	for (let i=0; i<this.trailHistory.length; i++) {
+
 	    if (i== this.trailLength-1)
-		console.log(calcTrailAlpha(i))
+		console.log(this.calcTrailAlpha(i))
+
 	    push();
-	    translate(this.trailHistory[i].x, this.trailHistory[i].y);
+	    blendMode(HARD_LIGHT);
+	    translate(this.trailHistory[i].x, this.trailHistory[i].y);	    
 	    // rotate(angle);
-	    strokeWeight(0);
+	    let strokeWidth = 4;
+	    strokeWeight( (((this.trailHistory.length-1-i) / (this.trailHistory.length-1-i)) - 1) * -strokeWidth );
 	    stroke(0);
 	    fill(this.color, this.calcTrailAlpha(i));
 
