@@ -1,13 +1,13 @@
 
 class Ball {
 
-    constructor(startX, startY, radius, color) {
+    constructor(startX, startY, radius, color, trailLength=0) {
 	this.x = startX;
 	this.y = startY;
 	this.radius = radius;
 	
 	this.trailHistory = [];
-	this.trailLength = 30;
+	this.trailLength = 1 + trailLength;
 	this.minTrailRadius = radius / 2;
 	
 	this.body = Matter.Bodies.circle(startX, startY, radius, {
@@ -64,11 +64,8 @@ class Ball {
 	
 	for (let i=0; i<this.trailHistory.length; i++) {
 
-	    if (i== this.trailLength-1)
-		console.log(this.calcTrailAlpha(i))
-
 	    push();
-	    blendMode(HARD_LIGHT);
+	    // blendMode(HARD_LIGHT);
 	    translate(this.trailHistory[i].x, this.trailHistory[i].y);	    
 	    // rotate(angle);
 	    let strokeWidth = 4;

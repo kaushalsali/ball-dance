@@ -16,7 +16,7 @@ let engine = null;
 
 let ground = null;
 
-let numBalls = 1;
+let numBalls = 10;
 let balls = [];
 
 
@@ -44,7 +44,7 @@ function setup() {
     
     // Add Balls     
     for (let i=0; i<numBalls; i++) {
-	balls[i] = new Ball(random(0, width), random(0, height-150), 40, 200);
+	balls[i] = new Ball(random(0, width), random(0, height-150), 30, 200, 15);
 	// balls[i] = new Ball(random(0, width), random(0, height-150), random(10,50), 200);
 	World.add(engine.world, balls[i].body);
     }
@@ -107,6 +107,8 @@ function draw() {
 
     background(80);
 
+    showFps();
+    
     Matter.Engine.update(engine);
     
     // Draw Ground
@@ -127,3 +129,9 @@ function draw() {
 
 }
 
+
+function showFps(){
+    textSize(32);
+    fill(70,250,5);
+    text("FPS: " + frameRate().toFixed(2), 10, height - 10);
+}
