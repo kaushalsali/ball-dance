@@ -106,19 +106,17 @@ function setup() {
 function draw() {
 
     background(80);
-
-    showFps();
     
     Matter.Engine.update(engine);
     
     // Draw Ground
     for (let i=0; i<4; i++)
-	ground.draw()
+	ground.draw();
     
     // Draw Balls
     for (let i=0; i<balls.length; i++) {
 	balls[i].update();
-	balls[i].draw()
+	balls[i].draw();
     }
 
     // console.log(balls[0].history.length)
@@ -130,8 +128,3 @@ function draw() {
 }
 
 
-function showFps(){
-    textSize(32);
-    fill(70,250,5);
-    text("FPS: " + frameRate().toFixed(2), 10, height - 10);
-}
