@@ -16,7 +16,7 @@ let engine = null;
 
 let ground = null;
 
-let numBalls = 2;
+let numBalls = 10;
 let balls = [];
 
 
@@ -26,7 +26,7 @@ let balls = [];
 function setup() {
 
     let myCanvas = createCanvas(canvasWidth, canvasHeight);
-    // resizeCanvas(window.innerWidth, window.innweHeight);
+    resizeCanvas(window.innerWidth, window.innerHeight);
     myCanvas.parent('canvas-container')
 
     background(80);
@@ -44,7 +44,8 @@ function setup() {
     
     // Add Balls     
     for (let i=0; i<numBalls; i++) {
-	balls[i] = new Ball(random(0, width), random(0, height-150), random(1,50));
+	balls[i] = new Ball(random(0, width), random(0, height-150), 30, 200, 15);
+	// balls[i] = new Ball(random(0, width), random(0, height-150), random(10,50), 200);
 	World.add(engine.world, balls[i].body);
     }
 
@@ -81,7 +82,7 @@ function setup() {
 	if(event.keyCode == 70) {
 	    for (let i=0; i<balls.length; i++) {
 		ball = balls[i].getBody();
-		Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:0.1});
+		Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:random(-0.05, 0.05)});
 	    }
 	}
     });
@@ -105,21 +106,25 @@ function setup() {
 function draw() {
 
     background(80);
-
+    
     Matter.Engine.update(engine);
     
     // Draw Ground
     for (let i=0; i<4; i++)
-	ground.draw()
+	ground.draw();
     
     // Draw Balls
     for (let i=0; i<balls.length; i++) {
+	balls[i].update();
 	balls[i].draw();
     }
 
-    collisionPairs = Matter.Query.collides(balls[0].getBody(), [balls[1].getBody()]);
-    if (collisionPairs.length > 0)
-    	console.log(collisionPairs[0].bodyA);
+    // console.log(balls[0].history.length)
+
+    // collisionPairs = Matter.Query.collides(balls[0].getBody(), [balls[1].getBody()]);
+    // if (collisionPairs.length > 0)
+    	// console.log(collisionPairs[0].bodyA);
 
 }
+
 

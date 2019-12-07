@@ -1,40 +1,87 @@
 
 class Ball {
 
-    constructor(startX, startY, radius) {
+    constructor(startX, startY, radius, color, trailLength=0) {
 	this.x = startX;
 	this.y = startY;
-	this.xStep = random(-5,5);
-	this.yStep = random(-5,5);
 	this.radius = radius;
-
-	let options = {
+	
+	this.trailHistory = [];
+	this.trailLength = 1 + trailLength;
+	this.minTrailRadius = radius / 2;
+	
+	this.body = Matter.Bodies.circle(startX, startY, radius, {
 	    friction: 0,
 	    frictionAir: 0,
 	    frictionStatic: 0,
 	    restitution: 1,
 	    // mass: random(1,2)
-	}
-	this.body = Matter.Bodies.circle(startX, startY, radius, options)		
+	});
+	
+	this.trailHistory.push(this.getPosition());
+
+	this.color = color;
+	this.alpha = 255;
+
     }
 
     getBody() {
 	return this.body;
     }
+
+    getPosition() {
+	return this.body.position;
+    }
+
+    getAngle() {
+	return this.body.angle;
+    }
+
+    calcTrailRadius(i) {	
+	let radiusIncFactor = (this.radius - this.minTrailRadius) / this.trailLength;
+	return this.minTrailRadius + (i * radiusIncFactor);
+    }
+
+    calcTrailAlpha(i) {
+	let alphaIncFactor = this.alpha / (this.trailLength - 1);
+	return i * alphaIncFactor;
+    }
+
+    update() {
+	let pos = this.getPosition()
+	// let angle = this.getAngle();
+	this.trailHistory.push({x: pos.x, y: pos.y});
+
+	if (this.trailHistory.length > this.trailLength)
+	    this.trailHistory.shift();
+	
+	// this.trailHistory.splice(this.trailHistory.length - this.trailLength);
+	// console.log(this.trailHistory.length);
+	
+    }
     
-    draw() {	
-	var pos = this.body.position;
-	var angle = this.body.angle;
-	push();
-	translate(pos.x, pos.y);
-	rotate(angle);
-	strokeWeight(2);
-	stroke(0);
-	fill(127);
-	ellipseMode(RADIUS);
-	ellipse(0, 0, this.radius);
-	// ellipse(0, 0, random(this.radius-0.5, this.radius+0.5), random(this.radius-0.5, this.radius+0.5));
-	pop();
+    draw() {
+	
+	for (let i=0; i<this.trailHistory.length; i++) {
+
+	    push();
+	    // blendMode(HARD_LIGHT);
+	    translate(this.trailHistory[i].x, this.trailHistory[i].y);	    
+	    // rotate(angle);
+	    let strokeWidth = 4;
+	    strokeWeight( (((this.trailHistory.length-1-i) / (this.trailHistory.length-1-i)) - 1) * -strokeWidth );
+	    stroke(0);
+	    fill(this.color, this.calcTrailAlpha(i));
+
+	    ellipseMode(RADIUS);
+	    ellipse(0, 0,  this.calcTrailRadius(i));
+	    // ellipse(0, 0, random(this.radius-0.5, this.radius+0.5), random(this.radius-0.5, this.radius+0.5)
+
+	    pop();
+	    // console.log(this.trailHistory[i]);
+	}
+	// console.log("---");
+
     }     
 }
 
