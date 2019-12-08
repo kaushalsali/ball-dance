@@ -1,7 +1,10 @@
 
 class Ball {
 
-    constructor(startX, startY, radius, color, trailLength=0) {
+    constructor(id, startX, startY, radius, color, trailLength=0) {	
+
+	this.id = id;
+	
 	this.x = startX;
 	this.y = startY;
 	this.radius = radius;
@@ -16,6 +19,8 @@ class Ball {
 	    frictionStatic: 0,
 	    restitution: 1,
 	    // mass: random(1,2)
+
+	    p5id: this.id
 	});
 	
 	this.trailHistory.push(this.getPosition());
@@ -87,6 +92,38 @@ class Ball {
 
 
 
+class TriggerBall extends Ball {
+
+    constructor(id, startX, startY, radius, color, trailLength=0, synth=null) {
+	super(id, startX, startY, radius, color, trailLength);
+	this.synth = synth;
+    }
+
+    setSynth(synth) {
+	this.synth = synth;
+    }
+
+    playSound(note) {
+	this.synth.triggerAttackRelease(note, NOTE_DURATION);
+    }
+}
+
+
+class RegularBall extends Ball {
+
+    constructor(id, startX, startY, radius, color, trailLength=0, pitch) {
+	super(id, startX, startY, radius, color, trailLength, color);
+	this.pitch = pitch;
+    }
+
+    getPitch() {
+	return this.pitch;
+    }
+    
+}
+
+
+
 class Ground {
     
     constructor() {
@@ -142,3 +179,8 @@ class Surface {
 	rect(this.body.position.x, this.body.position.y, this.width, this.height);
     }    
 }
+
+
+
+
+
