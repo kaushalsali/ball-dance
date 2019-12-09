@@ -18,7 +18,10 @@ let triggerBalls = [];
 let regularBalls = [];
 let regularBallBodies = [];
 
-let color_id = 2;
+let cur_num_reg_balls = NUM_REG_BALLS;
+let cur_num_trig_balls = NUM_TRIG_BALLS;
+
+let color_id = 0;
 
 
 function setup() {
@@ -60,10 +63,6 @@ function setup() {
         World.add(engine.world, triggerBalls[i].getBody());
     }
  
-
-
-
-
     
     // Add mouse control
     let myMouse = Mouse.create(window.canvas);
@@ -96,7 +95,7 @@ function setup() {
 
     document.addEventListener('keydown', function(event) {
     if(event.keyCode == 70) {
-        for (let i=0; i < NUM_TRIG_BALLS; i++) {
+        for (let i=0; i < cur_num_trig_balls; i++) {
             let ball = triggerBalls[i].getBody()
             Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:random(-0.05, 0.05)});
         }
@@ -111,7 +110,6 @@ function setup() {
     Engine.run(engine)
 }
 
-
 function draw() {
 
     background(BACKGROUND_COLOR[color_id]);
@@ -123,13 +121,13 @@ function draw() {
         ground.draw();
     
     // Draw Balls
-    for (let i=0; i < NUM_REG_BALLS; i++) {
+    for (let i=0; i < cur_num_reg_balls; i++) {
         regularBalls[i].update();
         regularBalls[i].draw();
     }
 
     
-    for (let i=0; i < NUM_TRIG_BALLS; i++) {
+    for (let i=0; i < cur_num_trig_balls; i++) {
         triggerBalls[i].update();
         triggerBalls[i].draw();
 
@@ -154,5 +152,22 @@ function draw() {
     }
     }
 
+}
 
+function mouseClicked(event){
+    if (event.shiftKey){ // shift + click
+        let i = cur_num_trig_balls;
+        triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, 30, TRIG_BALL_COLOR, 15)
+        World.add(engine.world, triggerBalls[i].getBody());
+        cur_num_trig_balls = cur_num_trig_balls + 1;
+        console.log('adding a trigger ball...current num: ' + str(cur_num_trig_balls));
+    }
+    else {
+        let i = cur_num_reg_balls;
+        regularBalls[i] = new RegularBall(i, mouseX, mouseY, 30, REG_BALL_COLOR, 15, PITCHES[i%3]);
+        regularBallBodies[i] = regularBalls[i].getBody();
+        World.add(engine.world, regularBallBodies[i]);
+        cur_num_reg_balls = cur_num_reg_balls + 1;
+        console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
+    }
 }
