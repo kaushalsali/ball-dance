@@ -94,21 +94,52 @@ function setup() {
 
 
     document.addEventListener('keydown', function(event) {
-    if(event.keyCode == 70) {
-        for (let i=0; i < cur_num_trig_balls; i++) {
-            let ball = triggerBalls[i].getBody()
-            Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:random(-0.05, 0.05)});
+        if(event.keyCode == 70) {
+            for (let i=0; i < cur_num_trig_balls; i++) {
+                let ball = triggerBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:random(-0.05, 0.05)});
+            }
         }
-    }
+        if(event.keyCode == 38) {
+            for (let i=0; i < cur_num_trig_balls; i++) {
+                let ball = triggerBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:0, y:random(-0.05, 0)});
+            }
+        }
+        if(event.keyCode == 40) {
+            for (let i=0; i < cur_num_trig_balls; i++) {
+                let ball = triggerBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:0, y:random(0, 0.05)});
+            }
+        }
+        if(event.keyCode == 37) {
+            for (let i=0; i < cur_num_trig_balls; i++) {
+                let ball = triggerBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0), y:0});
+            }
+        }
+        if(event.keyCode == 39) {
+            for (let i=0; i < cur_num_trig_balls; i++) {
+                let ball = triggerBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(0, 0.05), y:0});
+            }
+        }
+        if(event.keyCode == 32) {
+            for (let i=0; i < cur_num_trig_balls; i++) {
+                let ball = triggerBalls[i].getBody()
+                Matter.Body.setVelocity(ball, {x: 0, y:0});
+            }
+            for (let i=0; i < cur_num_reg_balls; i++) {
+                let ball = regularBalls[i].getBody()
+                Matter.Body.setVelocity(ball, {x: 0, y:0});
+            }
+        }
     });
-
-
-
-    
     
     // Start Engine
     Engine.run(engine)
 }
+
 
 function draw() {
 
@@ -131,25 +162,25 @@ function draw() {
         triggerBalls[i].update();
         triggerBalls[i].draw();
 
-    for (let j=0; j<regularBalls.length; j++) {
-        collision = Matter.SAT.collides(triggerBalls[i].getBody(), regularBallBodies[j]);
-        if (collision.collided) {
+        for (let j=0; j<regularBalls.length; j++) {
+            collision = Matter.SAT.collides(triggerBalls[i].getBody(), regularBallBodies[j]);
+            if (collision.collided) {
 
-            cur_time = Date.now();
-            if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
-                regBall = regularBalls[collision.bodyB.p5id];
-                triggerBalls[i].playSound(regBall.getPitch());
-                color_id = (color_id + 1) % TOTAL_COLORS;
-                //console.log(cur_time - regularBalls[j].lastHitTime);
-                regularBalls[j].setLastHitTime(cur_time);
+                cur_time = Date.now();
+                if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
+                    regBall = regularBalls[collision.bodyB.p5id];
+                    triggerBalls[i].playSound(regBall.getPitch());
+                    color_id = (color_id + 1) % TOTAL_COLORS;
+                    //console.log(cur_time - regularBalls[j].lastHitTime);
+                    regularBalls[j].setLastHitTime(cur_time);
+                }
+                else{
+                    //console.log(cur_time - regularBalls[j].lastHitTime);
+                    regularBalls[j].setLastHitTime(cur_time);
+                }
             }
-            else{
-                //console.log(cur_time - regularBalls[j].lastHitTime);
-                regularBalls[j].setLastHitTime(cur_time);
-            }
+            
         }
-        
-    }
     }
 
 }

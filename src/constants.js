@@ -1,5 +1,5 @@
-const NUM_REG_BALLS = 10;
-const NUM_TRIG_BALLS = 2;
+const NUM_REG_BALLS = 5;
+const NUM_TRIG_BALLS = 1;
 
 const NOTE_DURATION = 0.5;
 

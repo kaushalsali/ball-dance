@@ -17,7 +17,7 @@ class Ball {
 		    friction: 0,
 		    frictionAir: 0,
 		    frictionStatic: 0,
-		    restitution: 1,
+		    restitution: 0.7,
 		    // mass: random(1,2)
 
 		    p5id: this.id
@@ -77,9 +77,11 @@ class Ball {
 		    // blendMode(HARD_LIGHT);
 		    translate(this.trailHistory[i].x, this.trailHistory[i].y);	    
 		    // rotate(angle);
-		    let strokeWidth = 4;
-		    strokeWeight( (((this.trailHistory.length-1-i) / (this.trailHistory.length-1-i)) - 1) * -strokeWidth );
-		    noStroke();
+		    
+		    //let strokeWidth = 4;
+		    //strokeWeight( (((this.trailHistory.length-1-i) / (this.trailHistory.length-1-i)) - 1) * -strokeWidth );
+		    //noStroke();
+		    
 		    let c = color(this.color[0], this.color[1], this.color[2], this.calcTrailAlpha(i));
 		    fill(c);
 
