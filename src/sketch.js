@@ -25,6 +25,8 @@ let color_id = 0;
 
 
 function setup() {
+
+    ConnectServer();
     
     let myCanvas = createCanvas(canvasWidth, canvasHeight);
     resizeCanvas(window.innerWidth, window.innerHeight);
@@ -59,7 +61,7 @@ function setup() {
     
     // Create Trigger Balls
     for (let i = 0; i < NUM_TRIG_BALLS; i++) {
-        triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 15)
+        triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 30)
         World.add(engine.world, triggerBalls[i].getBody());
     }
  
@@ -186,6 +188,8 @@ function draw() {
 }
 
 function mouseClicked(event){
+    let msg = str(mouseX) + ' ' + str(mouseY);
+    SendMessage('/mouse', msg);
     if (event.shiftKey){ // shift + click
         let i = cur_num_trig_balls;
         triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, 30, TRIG_BALL_COLOR, 15)
@@ -200,5 +204,57 @@ function mouseClicked(event){
         World.add(engine.world, regularBallBodies[i]);
         cur_num_reg_balls = cur_num_reg_balls + 1;
         console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
+    }
+}
+
+
+function ConnectServer() {
+    currentHost = 'localhost:12345';
+
+    // connect to WebSocket server:
+    try {
+        oscWebSocket = new osc.WebSocketPort({
+            url: "ws://" + currentHost,
+            metadata: true
+        });
+
+        oscWebSocket.on("ready", onSocketOpen);
+        oscWebSocket.on("message", onSocketMessage);
+        oscWebSocket.on("error", function(e){
+            print(e.message);
+        });
+  
+        oscWebSocket.open();
+    } catch(e) {
+        print(e);
+        statusMessage = e;
+    }
+}
+
+function SendMessage(address, msg) {
+    // send the OSC message to server. (osc.js will convert it to binary packet):
+    oscWebSocket.send({
+        address: address,
+        args: [{
+            type: "s",
+            value: msg
+        }]
+    });
+}
+
+
+function onSocketOpen(e) {
+    print('server connected');
+    statusMessage = 'server connected';
+}
+
+
+function onSocketMessage(message) {
+    print(message);
+    if (message) {
+        receivedMessage = 'address: ' + message.address;
+        if (message.args && message.args.length > 0) {
+            receivedMessage += ', value: ' + message.args[0].value;
+        }
     }
 }
