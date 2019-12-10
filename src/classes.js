@@ -101,9 +101,9 @@ class Ball {
 
 class TriggerBall extends Ball {
 
-    constructor(id, startX, startY, radius, colors, trailLength=0, synth=null) {
+    constructor(id, startX, startY, radius, colors, trailLength=0, ins_class=1) {
 		super(id, startX, startY, radius, colors, trailLength);
-		this.synth = synth;
+		this.ins_class = ins_class;
     }
 
     setSynth(synth) {
@@ -112,7 +112,9 @@ class TriggerBall extends Ball {
 
     playSound(note) {
 		//this.synth.triggerAttackRelease(note, NOTE_DURATION);
-		console.log("playSound called: " + str(note));
+		//console.log("playSound called: " + str(note));
+		let msg = str(note);
+		SendMessage('/play' + str(this.ins_class), msg);
     }
 }
 
@@ -123,10 +125,11 @@ class RegularBall extends Ball {
 		super(id, startX, startY, radius, colors, trailLength, color);
 		this.pitch = pitch;
 		this.lastHitTime = Date.now();
-		//console.log("regular ball created: " + str(this.lastHit));
+		//console.log("regular ball created: " + str(this.id) + ' ' + str(this.pitch));
     }
 
     getPitch() {
+    	//console.log("regular ball get pitch: " + str(this.id) + ' ' + str(this.pitch));
 		return this.pitch;
     }
 

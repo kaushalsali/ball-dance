@@ -61,7 +61,7 @@ function setup() {
     
     // Create Trigger Balls
     for (let i = 0; i < NUM_TRIG_BALLS; i++) {
-        triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 30)
+        triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 30, i%3)
         World.add(engine.world, triggerBalls[i].getBody());
     }
  
@@ -164,13 +164,14 @@ function draw() {
         triggerBalls[i].update();
         triggerBalls[i].draw();
 
-        for (let j=0; j<regularBalls.length; j++) {
+        for (let j=0; j<cur_num_reg_balls; j++) {
             collision = Matter.SAT.collides(triggerBalls[i].getBody(), regularBallBodies[j]);
             if (collision.collided) {
-
+                //console.log("trigger, reg: ", i, j)
                 cur_time = Date.now();
                 if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
-                    regBall = regularBalls[collision.bodyB.p5id];
+                    regBall = regularBalls[j];
+                    //console.log(regBall.id, j);
                     triggerBalls[i].playSound(regBall.getPitch());
                     color_id = (color_id + 1) % TOTAL_COLORS;
                     //console.log(cur_time - regularBalls[j].lastHitTime);
@@ -188,11 +189,11 @@ function draw() {
 }
 
 function mouseClicked(event){
-    let msg = str(mouseX) + ' ' + str(mouseY);
-    SendMessage('/mouse', msg);
+    let msg = str(mouseX/width) + ' ' + str(mouseY/height);
+    SendMessage('/mouse', "mouse clicked.");
     if (event.shiftKey){ // shift + click
         let i = cur_num_trig_balls;
-        triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, 30, TRIG_BALL_COLOR, 15)
+        triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, 30, TRIG_BALL_COLOR, 30, i%3)
         World.add(engine.world, triggerBalls[i].getBody());
         cur_num_trig_balls = cur_num_trig_balls + 1;
         console.log('adding a trigger ball...current num: ' + str(cur_num_trig_balls));
@@ -204,57 +205,5 @@ function mouseClicked(event){
         World.add(engine.world, regularBallBodies[i]);
         cur_num_reg_balls = cur_num_reg_balls + 1;
         console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
-    }
-}
-
-
-function ConnectServer() {
-    currentHost = 'localhost:12345';
-
-    // connect to WebSocket server:
-    try {
-        oscWebSocket = new osc.WebSocketPort({
-            url: "ws://" + currentHost,
-            metadata: true
-        });
-
-        oscWebSocket.on("ready", onSocketOpen);
-        oscWebSocket.on("message", onSocketMessage);
-        oscWebSocket.on("error", function(e){
-            print(e.message);
-        });
-  
-        oscWebSocket.open();
-    } catch(e) {
-        print(e);
-        statusMessage = e;
-    }
-}
-
-function SendMessage(address, msg) {
-    // send the OSC message to server. (osc.js will convert it to binary packet):
-    oscWebSocket.send({
-        address: address,
-        args: [{
-            type: "s",
-            value: msg
-        }]
-    });
-}
-
-
-function onSocketOpen(e) {
-    print('server connected');
-    statusMessage = 'server connected';
-}
-
-
-function onSocketMessage(message) {
-    print(message);
-    if (message) {
-        receivedMessage = 'address: ' + message.address;
-        if (message.args && message.args.length > 0) {
-            receivedMessage += ', value: ' + message.args[0].value;
-        }
     }
 }

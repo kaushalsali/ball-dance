@@ -3,7 +3,7 @@ const NUM_TRIG_BALLS = 1;
 
 const NOTE_DURATION = 0.5;
 
-PITCHES = ["C4", "E4", "G4"]
+PITCHES = [60, 64, 67]
 
 // Colors
 const TOTAL_COLORS = 3;
