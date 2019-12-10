@@ -36,12 +36,11 @@ class BallSystem {
 	return this.regularBalls;
     }
 
-    addNewTriggerBall(x=null, y=null, instrument=null) { // TODO: Factory class for creating balls
+    addNewTriggerBall(x=null, y=null, instrument=random(0,2)) { // TODO: Factory class for creating balls
 	if (triggerBalls.length < MAX_REG_BALLS) {
 	    let r = max(randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]), MIN_R);
 	    x = x || random(r, width-r)
 	    y = y || random(r, height-r)
-	    instrument = instrument || random(0,2)	    
 	    let ball = new TriggerBall(this.triggerBalls.length, x, y, r, TRIG_BALL_COLOR, 15, instrument)	    
 	    this.triggerBalls.push(ball);
 	    World.add(this.world, ball.getBody());
