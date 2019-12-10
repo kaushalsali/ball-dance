@@ -12,8 +12,12 @@ let canvasWidth = 1920;
 let canvasHeight = 1080;
 
 let engine = null;
+let world = null;
+
+
 let ground = null;
 
+let ballSystem = null;
 let triggerBalls = [];
 let regularBalls = [];
 let regularBallBodies = [];
@@ -38,8 +42,9 @@ function setup() {
     
     // Create Engine
     engine = Engine.create();
-    engine.world.gravity.x = 0;
-    engine.world.gravity.y = 0;
+    world = engine.world;
+    world.gravity.x = 0;
+    world.gravity.y = 0;
 
     
     // Create Ground    
@@ -48,21 +53,10 @@ function setup() {
     for (let i=0; i<ground.getNumSurfaces(); i++)   
         World.add(engine.world, surfaceBodies[i]);
 
-    
-    // Create Regular Balls    
-    for (let i = 0; i < NUM_REG_BALLS; i++) {
-        regularBalls[i] = new RegularBall(i, random(0, width), random(0, height-150), 30, REG_BALL_COLOR, 15, PITCHES[i%3]);
-        regularBallBodies[i] = regularBalls[i].getBody();
-        World.add(engine.world, regularBallBodies[i]);
-    }
-    
-    
-    // Create Trigger Balls
-    for (let i = 0; i < NUM_TRIG_BALLS; i++) {
-        triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 15)
-        World.add(engine.world, triggerBalls[i].getBody());
-    }
- 
+     
+
+    ballSystem = new BallSystem(world, NUM_TRIG_BALLS, NUM_REG_BALLS);
+
     
     // Add mouse control
     let myMouse = Mouse.create(window.canvas);
@@ -82,36 +76,42 @@ function setup() {
             }
         }
         if(event.keyCode == 38) { // up
-            for (let i=0; i < cur_num_trig_balls; i++) {
-                let ball = triggerBalls[i].getBody()
+	    let trigBalls = ballSystem.getTriggerBalls();
+            for (let i=0; i < trigBalls.length; i++) {
+                let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: -0.05});
             }
         }
         if(event.keyCode == 40) { // down
-            for (let i=0; i < cur_num_trig_balls; i++) {
-                let ball = triggerBalls[i].getBody()
+	    let trigBalls = ballSystem.getTriggerBalls();
+            for (let i=0; i < trigBalls.length; i++) {
+                let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: 0.05});
             }
         }
         if(event.keyCode == 37) { // left
-            for (let i=0; i < cur_num_trig_balls; i++) {
-                let ball = triggerBalls[i].getBody()
+	    let trigBalls = ballSystem.getTriggerBalls();
+            for (let i=0; i < trigBalls.length; i++) {
+                let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: -0.05, y: 0});
             }
         }
         if(event.keyCode == 39) { // right
-            for (let i=0; i < cur_num_trig_balls; i++) {
-                let ball = triggerBalls[i].getBody()
+	    let trigBalls = ballSystem.getTriggerBalls();
+            for (let i=0; i < trigBalls.length; i++) {
+                let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0.05, y: 0});
             }
         }
-        if(event.keyCode == 32) {
-            for (let i=0; i < cur_num_trig_balls; i++) {
-                let ball = triggerBalls[i].getBody()
+        if(event.keyCode == 32) { // space
+	    let trigBalls = ballSystem.getTriggerBalls();
+            for (let i=0; i < trigBalls.length; i++) {
+                let ball = trigBalls[i].getBody()
                 Matter.Body.setVelocity(ball, {x: 0, y:0});
             }
-            for (let i=0; i < cur_num_reg_balls; i++) {
-                let ball = regularBalls[i].getBody()
+	    let regBalls = ballSystem.getRegularBalls();
+            for (let i=0; i < regBalls.length; i++) {
+                let ball = regBalls[i].getBody()
                 Matter.Body.setVelocity(ball, {x: 0, y:0});
             }
         }
@@ -124,62 +124,50 @@ function setup() {
 
 function draw() {
 
-    background(BACKGROUND_COLOR[color_id]);
-    
     Matter.Engine.update(engine);
-    
+
+    // Draw background
+    background(BACKGROUND_COLOR[color_id]);
+        
     // Draw Ground
     for (let i=0; i<4; i++)
         ground.draw();
     
     // Draw Balls
-    for (let i=0; i < cur_num_reg_balls; i++) {
-        regularBalls[i].update();
-        regularBalls[i].draw();
-    }
+    ballSystem.updateAndDrawTriggerBalls();
+    ballSystem.updateAndDrawRegularBalls();
 
-    
-    for (let i=0; i < cur_num_trig_balls; i++) {
-        triggerBalls[i].update();
-        triggerBalls[i].draw();
-
-        for (let j=0; j<regularBalls.length; j++) {
-            collision = Matter.SAT.collides(triggerBalls[i].getBody(), regularBallBodies[j]);
-            if (collision.collided) {
-
-                cur_time = Date.now();
-                if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
-                    regBall = regularBalls[collision.bodyB.p5id];
-                    triggerBalls[i].playSound(regBall.getPitch());
-                    color_id = (color_id + 1) % TOTAL_COLORS;
-                    //console.log(cur_time - regularBalls[j].lastHitTime);
-                    regularBalls[j].setLastHitTime(cur_time);
-                }
-                else{
-                    //console.log(cur_time - regularBalls[j].lastHitTime);
-                    regularBalls[j].setLastHitTime(cur_time);
-                }
-            }
-            
-        }
-    }
-
+    // Handle Collisions
+    // for (let j=0; j<regularBalls.length; j++) {
+    //     collision = Matter.SAT.collides(triggerBalls[i].getBody(), regularBallBodies[j]);
+    //     if (collision.collided) {
+	    
+    //         cur_time = Date.now();
+    //         if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
+    //             regBall = regularBalls[collision.bodyB.p5id];
+    //             triggerBalls[i].playSound(regBall.getPitch());
+    //             color_id = (color_id + 1) % TOTAL_COLORS;
+    //             //console.log(cur_time - regularBalls[j].lastHitTime);
+    //             regularBalls[j].setLastHitTime(cur_time);
+    //         }
+    //         else{
+    //             //console.log(cur_time - regularBalls[j].lastHitTime);
+    //             regularBalls[j].setLastHitTime(cur_time);
+    //         }
+    //     }
+        
+    // }
 }
+
+
 
 function mouseClicked(event){
     if (event.shiftKey){ // shift + click
-        let i = cur_num_trig_balls;
-        triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, 30, TRIG_BALL_COLOR, 15)
-        World.add(engine.world, triggerBalls[i].getBody());
-        cur_num_trig_balls = cur_num_trig_balls + 1;
-        console.log('adding a trigger ball...current num: ' + str(cur_num_trig_balls));
+	ballSystem.addNewTriggerBall();
+        console.log('adding a trigger ball...current num: ' + str(ballSystem.getNumTriggerBalls()));
     }
     else {
-        let i = cur_num_reg_balls;
-        regularBalls[i] = new RegularBall(i, mouseX, mouseY, 30, REG_BALL_COLOR, 15, PITCHES[i%3]);
-        regularBallBodies[i] = regularBalls[i].getBody();
-        World.add(engine.world, regularBallBodies[i]);
-        cur_num_reg_balls = cur_num_reg_balls + 1;
-        console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
+	ballSystem.addNewRegularBall();
+        console.log('adding a regular ball...current num: ' + str(ballSystem.getNumRegularBalls()));
     }
 }

@@ -1,4 +1,87 @@
 
+class BallSystem {
+
+    constructor(world, numTriggerBalls=1, numRegularBalls=5) {	
+
+	this.world = world
+	this.triggerBalls = [];
+	this.regularBalls = [];
+
+	for (let i=0; i < numTriggerBalls; i++) {
+            this.triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 15);
+            World.add(this.world, this.triggerBalls[i].getBody());
+	}
+	
+	for (let i=0; i<numRegularBalls; i++) {
+	    this.regularBalls[i] = new RegularBall(i, random(0, width), random(0, height-150), 30, REG_BALL_COLOR, 15, PITCHES[i%3]);
+	    World.add(this.world, this.regularBalls[i].getBody());
+	}		
+    }
+
+    getNumTriggerBalls() {
+	return this.triggerBalls.length;
+    }
+
+    getNumRegularBalls() {
+	return this.regularBalls.length;
+    }
+
+    getTriggerBalls() {
+	return this.triggerBalls;
+    }
+
+    getRegularBalls() {
+	return this.regularBalls;
+    }
+
+    addNewTriggerBall(ball) {
+	if (triggerBalls.length < MAX_REG_BALLS) {
+	    let ball = new TriggerBall(triggerBalls.length, mouseX, mouseY, 30, TRIG_BALL_COLOR, 15)
+	    this.triggerBalls.push(ball);
+	    World.add(this.world, ball.getBody());
+	}
+    }
+    
+    removeTriggerBall(ball) {
+	let index = this.triggerBalls.findIndex(b => b.getId() === ball.getId())
+	if (index !== -1) {
+	    Matter.Composite.remove(this.world, ball.getBody())
+	    this.triggerBalls.splice(index, 1);
+	}
+    }
+
+    addNewRegularBall() {
+	if (regularBalls.length < MAX_REG_BALLS) {	    
+	    let ball = new RegularBall(this.regularBalls.length, mouseX, mouseY, 30, REG_BALL_COLOR, 15, PITCHES[this.regularBalls.length % 3]);
+	    this.regularBalls.push(ball);
+	    World.add(this.world, ball.getBody());
+	}	
+    }
+    
+    removeRegularBall(ball) {
+	let index = this.regularBalls.findIndex(b => b.getId() === ball.getId())
+	if (index !== -1) {
+	    Matter.Composite.remove(this.world, ball.getBody())
+	    this.regularBalls.splice(index, 1);
+	}
+    }
+
+    updateAndDrawTriggerBalls() {
+	for (let i=0; i < this.triggerBalls.length; i++) {
+            this.triggerBalls[i].update();
+            this.triggerBalls[i].draw();
+	}
+    }
+
+    updateAndDrawRegularBalls() {
+	for (let i=0; i < this.regularBalls.length; i++) {
+            this.regularBalls[i].update();
+            this.regularBalls[i].draw();
+	}
+    }
+}
+
+
 class Ball {
 
     constructor(id, startX, startY, radius, colors, trailLength=0) {	
