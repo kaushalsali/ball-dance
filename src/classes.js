@@ -8,12 +8,16 @@ class BallSystem {
 	this.regularBalls = [];
 
 	for (let i=0; i < numTriggerBalls; i++) {
-            this.triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 15);
-            World.add(this.world, this.triggerBalls[i].getBody());
+        let r = randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]);
+        r = max(r, MIN_R);
+        this.triggerBalls[i] = new TriggerBall(i, random(r, width-r), random(r, height-r), r, TRIG_BALL_COLOR, 30, i%TOTAL_INS);
+        World.add(this.world, this.triggerBalls[i].getBody());
 	}
 	
 	for (let i=0; i<numRegularBalls; i++) {
-	    this.regularBalls[i] = new RegularBall(i, random(0, width), random(0, height-150), 30, REG_BALL_COLOR, 15, PITCHES[i%3]);
+      let r = randomGaussian(REG_RANGE[0], REG_RANGE[1]);
+      r = max(r, MIN_R);
+	    this.regularBalls[i] = new RegularBall(i, random(r, width-r), random(r, height-r), r, REG_BALL_COLOR, 15, PITCHES[i%TOTAL_PITCHES]);;
 	    World.add(this.world, this.regularBalls[i].getBody());
 	}
     }
@@ -138,6 +142,8 @@ class Ball {
 	this.trailLength = 1 + trailLength;
 	this.minTrailRadius = radius / 2;
 	this.trailHistory.push(this.getPosition());
+      
+  this.dots = [];
 
 	//Colours
 	this.colors = colors;	
@@ -197,8 +203,6 @@ class Ball {
 
 	if (this.trailHistory.length > this.trailLength)
 	    this.trailHistory.shift();
-	
-	this.color = this.colors[color_id];
 			
 	this.life -= 0.01;
 
@@ -206,6 +210,22 @@ class Ball {
 	    this.deathSequence();
 	}
 	
+		this.color = this.colors[color_id];
+
+		this.x = pos.x;
+		this.y = pos.y;
+		
+    }
+
+    explode() {
+    	let pos = this.getPosition();
+    	for (let i = 0; i < EXPLODE_DOTS; i++){
+    		let d = new Dot(pos.x, pos.y, this.radius, this.color);
+    		this.dots[i] = d
+    		let id = dots.length;
+    		dots[id] = d;
+    	}
+    	//console.log("after explode: ", dots.length);
     }
     
     draw() {
@@ -240,40 +260,53 @@ class Ball {
 
 class TriggerBall extends Ball {
 
-    constructor(id, startX, startY, radius, colors, trailLength=0, synth=null) {
-	super(id, startX, startY, radius, colors, trailLength);
-	this.synth = synth;
+    constructor(id, startX, startY, radius, colors, trailLength=0, ins_class=1) {
+		super(id, startX, startY, radius, colors, trailLength);
+		this.ins_class = ins_class;
     }
 
     setSynth(synth) {
 	this.synth = synth;
     }
 
-    playSound(note) {
-	// console.log("playSound called: " + str(note));
-    }
-
     deathSequence() {
 	// console.log('trig dead', this);
     }
+    playSound(note, radius) {
+		let msg = str(note) + ' ' + str(radius);
+		SendMessage('/play' + str(this.ins_class), msg);
+    }
+
+      playExplosionSound() {
+    	let p = PITCHES[floor(random(0, 5))] + 60 - this.ins_class * 12;
+    	let msg = str(p) + ' ' + str(this.radius);
+    	SendMessage('/play' + str(this.ins_class), msg);
+      }    
 }
 
 
 class RegularBall extends Ball {
 
     constructor(id, startX, startY, radius, colors, trailLength=0, pitch) {
-	super(id, startX, startY, radius, colors, trailLength, color);
-	this.pitch = pitch;
-	this.lastHitTime = Date.now();
-	//console.log("regular ball created: " + str(this.lastHit));
+		super(id, startX, startY, radius, colors, trailLength, color);
+		this.pitch = pitch;
+		this.lastHitTime = Date.now();
     }
 
     getPitch() {
-	return this.pitch;
+    	//console.log("regular ball get pitch: " + str(this.id) + ' ' + str(this.pitch));
+		return this.pitch;
     }
 
     setLastHitTime(newHitTime){
     	this.lastHitTime = newHitTime;
+    }
+
+    playExplosionSound(){
+    	let v = Math.sqrt(Math.pow(this.body.velocity.x, 2) + Math.pow(this.body.velocity.y, 2));
+    	let msg = str(this.pitch) + ' ' + str(this.radius);
+    	//console.log(msg);
+    	SendMessage('/explodeRegular', msg);
     }
     
     deathSequence() {
@@ -283,6 +316,51 @@ class RegularBall extends Ball {
     
 }
 
+class Dot {
+
+	constructor(x, y, initR, c, finalR=0, lifespan=100){
+		// position
+		this.pos = createVector(x, y);
+
+		// radius, color and lifespan
+		this.radius = initR;
+		this.finalR = finalR;
+		this.color = c;
+		this.lifespan = lifespan;
+		this.life = lifespan;
+
+		colorMode(RGB);
+		this.r = red(c);
+		this.g = green(c);
+		this.b = blue(c);
+		//console.log(this.r, this.g, this.b);
+
+		this.vel = p5.Vector.random2D();
+		this.acc = p5.Vector.random2D();
+
+	}
+
+	draw() {
+		noStroke();
+		//console.log(this.life/this.lifespan);
+		fill(this.r, this.g, this.b, this.life / this.lifespan * 255);
+		ellipseMode(RADIUS);
+		ellipse(this.pos.x, this.pos.y, this.radius);
+	}
+	
+	update(){
+		this.pos.add(this.vel);
+		this.vel.add(this.acc);
+		this.vel.mult(0.99);
+
+		this.life -= 1;
+		if (this.radius > this.finalR){
+			this.radius *= 0.8;
+		}
+	}
+
+
+}
 
 
 class Ground {

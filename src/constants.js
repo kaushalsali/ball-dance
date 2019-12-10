@@ -3,9 +3,18 @@ const NUM_TRIG_BALLS = 3;
 const MAX_REG_BALLS = 100;
 const MAX_TRIG_BALLS = 50;
 
+const EXPLODE_DOTS = 20;
+
 const NOTE_DURATION = 0.5;
 
-PITCHES = ["C4", "E4", "G4"]
+const TOTAL_INS = 3;
+
+const TOTAL_PITCHES = 5;
+const PITCHES = [60, 64, 67, 62, 65];
+
+const TRIG_RANGE = [40, 10];
+const REG_RANGE = [30, 15];
+const MIN_R = 15;
 
 // Colors
 const TOTAL_COLORS = 3;

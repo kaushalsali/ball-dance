@@ -21,6 +21,7 @@ let ballSystem = null;
 let triggerBalls = [];
 let regularBalls = [];
 let regularBallBodies = [];
+let dots = [];
 
 let cur_num_reg_balls = NUM_REG_BALLS;
 let cur_num_trig_balls = NUM_TRIG_BALLS;
@@ -29,6 +30,8 @@ let color_id = 0;
 
 
 function setup() {
+
+    ConnectServer();
     
     let myCanvas = createCanvas(canvasWidth, canvasHeight);
     resizeCanvas(window.innerWidth, window.innerHeight);
@@ -53,10 +56,10 @@ function setup() {
     for (let i=0; i<ground.getNumSurfaces(); i++)   
         World.add(engine.world, surfaceBodies[i]);
 
-     
-
+     // Create Ball System
     ballSystem = new BallSystem(world, NUM_TRIG_BALLS, NUM_REG_BALLS);
 
+          
     
     // Add mouse control
     let myMouse = Mouse.create(window.canvas);
@@ -123,6 +126,17 @@ function setup() {
                 Matter.Body.setVelocity(ball, {x: 0, y:0});
             }
         }
+        if (event.keyCode >= 49 && event.keyCode <= 51){ //TODO: FIX
+          
+          	ballSystem.addNewTriggerBall();
+
+//            triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, r, TRIG_BALL_COLOR, 30, (event.keyCode+2)%TOTAL_INS)
+
+        }
+        if (event.keyCode == 82) { //TODO: FIX
+//             regularBalls[i] = new RegularBall(i, mouseX, mouseY, r, REG_BALL_COLOR, 15, PITCHES[i%TOTAL_PITCHES]);
+          	ballSystem.addNewRegularBall();
+        }
     });
     
     // Start Engine
@@ -137,6 +151,18 @@ function draw() {
     // Draw background
     background(BACKGROUND_COLOR[color_id]);
         
+    
+    // Draw dots
+    //console.log(dots.length, "before");
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].draw();
+        dots[i].update();
+        if (dots[i].life <= 0){
+          dots.splice(i, 1);
+          //console.log(dots.length, "after");
+        }
+    }
+
     // Draw Ground
     for (let i=0; i<4; i++)
         ground.draw();
@@ -150,18 +176,39 @@ function draw() {
     let regBalls = ballSystem.getRegularBalls();    
 
     ballSystem.detectCollisions();
-    
+
 }
 
 
 
 function mouseClicked(event){
-    if (event.shiftKey){ // shift + click
-	ballSystem.addNewTriggerBall();
-        console.log('adding a trigger ball...current num: ' + str(ballSystem.getNumTriggerBalls()));
+
+  let mouse = createVector(mouseX, mouseY);
+
+    for (let i=0; i < triggerBalls.length; i++) {
+        let l = triggerBalls[i].getPosition();
+        let v = createVector(l.x, l.y);
+        if (v.dist(mouse) < triggerBalls[i].radius) {
+            triggerBalls[i].explode();
+            triggerBalls[i].playExplosionSound();
+            Matter.Composite.remove(engine.world, triggerBalls[i].getBody());
+            triggerBalls.splice(i, 1);
+            cur_num_trig_balls -= 1;
+            //console.log(dots);
+            //console.log("trigger ball explode, ", mouseX, mouseY);
+        }
     }
-    else {
-	ballSystem.addNewRegularBall();
-        console.log('adding a regular ball...current num: ' + str(ballSystem.getNumRegularBalls()));
+    for (let j=0; j<regularBalls.length; j++) {
+        let l = regularBalls[j].getPosition();
+        let v = createVector(l.x, l.y);
+        if (v.dist(mouse) < regularBalls[j].radius) {
+            regularBalls[j].explode();
+            regularBalls[j].playExplosionSound();
+            regularBallBodies.splice(j, 1);
+            Matter.Composite.remove(engine.world, regularBalls[j].getBody());
+            regularBalls.splice(j, 1);
+            cur_num_reg_balls -= 1;
+            //console.log("regular ball explode, ", mouseX, mouseY);
+        }
     }
 }
