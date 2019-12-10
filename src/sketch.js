@@ -69,11 +69,19 @@ function setup() {
 
 
     document.addEventListener('keydown', function(event) {
-        if(event.keyCode == 70) {
-            for (let i=0; i < cur_num_trig_balls; i++) {
-                let ball = triggerBalls[i].getBody();
-                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:random(-0.05, 0.05)});
+        if(event.keyCode == 70) { // F key
+
+	    let trigBalls = ballSystem.getTriggerBalls();
+            for (let i=0; i < trigBalls.length; i++) {
+                let ball = trigBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
             }
+	    let regBalls = ballSystem.getRegularBalls();
+            for (let i=0; i < regBalls.length; i++) {
+                let ball = regBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
+            }
+
         }
         if(event.keyCode == 38) { // up
 	    let trigBalls = ballSystem.getTriggerBalls();
