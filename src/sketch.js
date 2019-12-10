@@ -17,6 +17,7 @@ let ground = null;
 let triggerBalls = [];
 let regularBalls = [];
 let regularBallBodies = [];
+let dots = [];
 
 let cur_num_reg_balls = NUM_REG_BALLS;
 let cur_num_trig_balls = NUM_TRIG_BALLS;
@@ -172,6 +173,17 @@ function draw() {
     
     Matter.Engine.update(engine);
     
+    // Draw dots
+    //console.log(dots.length, "before");
+    for (let i = 0; i < dots.length; i++) {
+        dots[i].draw();
+        dots[i].update();
+        if (dots[i].life <= 0){
+          dots.splice(i, 1);
+          //console.log(dots.length, "after");
+        }
+    }
+
     // Draw Ground
     for (let i=0; i<4; i++)
         ground.draw();
@@ -194,7 +206,6 @@ function draw() {
                 cur_time = Date.now();
                 if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
                     regBall = regularBalls[j];
-                    console.log(regBall);
                     //console.log(regBall.id, j);
                     triggerBalls[i].playSound(regBall.getPitch(), regBall.radius);
                     color_id = (color_id + 1) % TOTAL_COLORS;
@@ -210,10 +221,35 @@ function draw() {
         }
     }
 
+
 }
 
 function mouseClicked(event){
-    let msg = str(mouseX/width) + ' ' + str(mouseY/height);
-    SendMessage('/mouse', event.keyCode);
-    //how about explosion?
+    SendMessage('/mouse', "mouse clicked");
+    let mouse = createVector(mouseX, mouseY);
+
+    for (let i=0; i < triggerBalls.length; i++) {
+        let l = triggerBalls[i].getPosition();
+        let v = createVector(l.x, l.y);
+        if (v.dist(mouse) < triggerBalls[i].radius) {
+            triggerBalls[i].explode();
+            Matter.Composite.remove(engine.world, triggerBalls[i].getBody());
+            triggerBalls.splice(i, 1);
+            cur_num_trig_balls -= 1;
+            //console.log(dots);
+            //console.log("trigger ball explode, ", mouseX, mouseY);
+        }
+    }
+    for (let j=0; j<regularBalls.length; j++) {
+        let l = regularBalls[j].getPosition();
+        let v = createVector(l.x, l.y);
+        if (v.dist(mouse) < regularBalls[j].radius) {
+            regularBalls[j].explode();
+            regularBallBodies.splice(j, 1);
+            Matter.Composite.remove(engine.world, regularBalls[j].getBody());
+            regularBalls.splice(j, 1);
+            cur_num_reg_balls -= 1;
+            //console.log("regular ball explode, ", mouseX, mouseY);
+        }
+    }
 }
