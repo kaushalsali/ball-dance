@@ -53,7 +53,7 @@ function setup() {
     
     // Create Regular Balls    
     for (let i = 0; i < NUM_REG_BALLS; i++) {
-        regularBalls[i] = new RegularBall(i, random(0, width), random(0, height-150), 30, REG_BALL_COLOR, 15, PITCHES[i%3]);
+        regularBalls[i] = new RegularBall(i, random(0, width), random(0, height-150), 30, REG_BALL_COLOR, 15, PITCHES[i%TOTAL_PITCHES]);
         regularBallBodies[i] = regularBalls[i].getBody();
         World.add(engine.world, regularBallBodies[i]);
     }
@@ -61,7 +61,7 @@ function setup() {
     
     // Create Trigger Balls
     for (let i = 0; i < NUM_TRIG_BALLS; i++) {
-        triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 30, i%3)
+        triggerBalls[i] = new TriggerBall(i, random(0, width), random(0, height-150), 30, TRIG_BALL_COLOR, 30, i%TOTAL_INS)
         World.add(engine.world, triggerBalls[i].getBody());
     }
  
@@ -136,6 +136,21 @@ function setup() {
                 Matter.Body.setVelocity(ball, {x: 0, y:0});
             }
         }
+        if (event.keyCode >= 49 && event.keyCode <= 51){
+            let i = cur_num_trig_balls;
+            triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, 30, TRIG_BALL_COLOR, 30, event.keyCode%TOTAL_INS)
+            World.add(engine.world, triggerBalls[i].getBody());
+            cur_num_trig_balls = cur_num_trig_balls + 1;
+            console.log('adding a trigger ball...current num: ' + str(cur_num_trig_balls));
+        }
+        if (event.keyCode == 82) {
+            let i = cur_num_reg_balls;
+            regularBalls[i] = new RegularBall(i, mouseX, mouseY, 30, REG_BALL_COLOR, 15, PITCHES[i%TOTAL_PITCHES]);
+            regularBallBodies[i] = regularBalls[i].getBody();
+            World.add(engine.world, regularBallBodies[i]);
+            cur_num_reg_balls = cur_num_reg_balls + 1;
+            console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
+        }
     });
     
     // Start Engine
@@ -190,20 +205,6 @@ function draw() {
 
 function mouseClicked(event){
     let msg = str(mouseX/width) + ' ' + str(mouseY/height);
-    SendMessage('/mouse', "mouse clicked.");
-    if (event.shiftKey){ // shift + click
-        let i = cur_num_trig_balls;
-        triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, 30, TRIG_BALL_COLOR, 30, i%3)
-        World.add(engine.world, triggerBalls[i].getBody());
-        cur_num_trig_balls = cur_num_trig_balls + 1;
-        console.log('adding a trigger ball...current num: ' + str(cur_num_trig_balls));
-    }
-    else {
-        let i = cur_num_reg_balls;
-        regularBalls[i] = new RegularBall(i, mouseX, mouseY, 30, REG_BALL_COLOR, 15, PITCHES[i%3]);
-        regularBallBodies[i] = regularBalls[i].getBody();
-        World.add(engine.world, regularBallBodies[i]);
-        cur_num_reg_balls = cur_num_reg_balls + 1;
-        console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
-    }
+    SendMessage('/mouse', event.keyCode);
+    //how about explosion?
 }
