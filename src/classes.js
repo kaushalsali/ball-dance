@@ -121,7 +121,7 @@ class BallSystem {
     		maxShakeness = tmpShakeness;
     }
     maxShakeness *= 10;
-    let msg = str(60) + ' ' + str(maxShakeness);
+    let msg = str(48) + ' ' + str(maxShakeness);
     SendMessage('/shaking', msg);
     }
 
@@ -136,7 +136,8 @@ class BallSystem {
 		if (collision.collided) {	    
 		    let cur_time = Date.now();
 
-		    if (cur_time - regBall.lastHitTime > SOUND_INTERVAL) {			
+		    if (cur_time - regBall.lastHitTime > SOUND_INTERVAL) {	
+		    console.log(regBall);		
 			this.triggerBalls[i].playSound(regBall.getPitch());
 			color_id = (color_id + 1) % TOTAL_COLORS;  // color_id is global
 			regBall.setLastHitTime(cur_time);
@@ -167,7 +168,7 @@ class Ball {
 	    friction: 0,
 	    frictionAir: 0,
 	    frictionStatic: 0,
-	    restitution: 0.7,
+	    restitution: 1,
 	    // mass: random(1,2)	    
 	    p5id: this.id
 	});
@@ -307,6 +308,7 @@ class TriggerBall extends Ball {
     }
     
     playSound(note, radius) {
+    radius = radius || 60;
 	let msg = str(note) + ' ' + str(radius);
 	SendMessage('/play' + str(this.ins_class), msg);
     }

@@ -27,6 +27,8 @@ let cur_num_trig_balls = NUM_TRIG_BALLS;
 
 let color_id = 0;
 
+let loopTimer = 0;
+let loopMode = false;
 
 function setup() {
 
@@ -132,6 +134,11 @@ function setup() {
         if (event.keyCode == 82) {
             ballSystem.addNewRegularBall(mouseX, mouseY);
         }
+
+        if (event.keyCode === 76) { // Key L
+            console.log('aaaa')
+            loopMode = !loopMode;
+        }
 	
     });
     
@@ -141,6 +148,8 @@ function setup() {
 
 
 function draw() {
+
+
 
     Matter.Engine.update(engine);
 
@@ -169,6 +178,23 @@ function draw() {
     ballSystem.updateAndDrawRegularBalls();
 
     ballSystem.computeShakeness();
+
+
+    loopTimer += 1
+    if ((loopTimer > 120) && (loopMode == true)) {
+        console.log('asd')        
+        let trigBalls = ballSystem.getTriggerBalls();
+            for (let i=0; i < trigBalls.length; i++) {
+                let ball = trigBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
+            }
+        let regBalls = ballSystem.getRegularBalls();
+            for (let i=0; i < regBalls.length; i++) {
+                let ball = regBalls[i].getBody()
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
+            }
+        loopTimer = 0;
+    }
 
 
 }
