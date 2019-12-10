@@ -167,7 +167,7 @@ class Ball {
 	    friction: 0,
 	    frictionAir: 0,
 	    frictionStatic: 0,
-	    restitution: 1,
+	    restitution: 0.9,
 	    // mass: random(1,2)	    
 	    p5id: this.id
 	});

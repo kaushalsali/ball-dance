@@ -9,8 +9,8 @@ const NOTE_DURATION = 0.5;
 
 const TOTAL_INS = 3;
 
-const TOTAL_PITCHES = 5;
-const PITCHES = [60, 64, 67, 62, 65];
+const TOTAL_PITCHES = 6;
+const PITCHES = [60, 64, 67, 62, 65, 72];
 
 const TRIG_RANGE = [40, 10];
 const REG_RANGE = [30, 15];
