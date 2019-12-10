@@ -58,7 +58,7 @@ class BallSystem {
 
     addNewRegularBall(x=null, y=null) {
 	if (regularBalls.length < MAX_REG_BALLS) {
-	    let r = max(randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]), MIN_R);
+	    let r = max(randomGaussian(REG_RANGE[0], REG_RANGE[1]), MIN_R);
 	    x = x || random(r, width-r)
 	    y = y || random(r, height-r)
 	    let ball = new RegularBall(this.regularBalls.length, mouseX, mouseY, r, REG_BALL_COLOR, 15, PITCHES[this.regularBalls.length % 3]);
