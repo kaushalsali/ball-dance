@@ -71,7 +71,7 @@ function setup() {
     document.addEventListener('keydown', function(event) {
         if(event.keyCode == 70) {
             for (let i=0; i < cur_num_trig_balls; i++) {
-                let ball = triggerBalls[i].getBody()
+                let ball = triggerBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:random(-0.05, 0.05)});
             }
         }
@@ -138,25 +138,11 @@ function draw() {
     ballSystem.updateAndDrawRegularBalls();
 
     // Handle Collisions
-    // for (let j=0; j<regularBalls.length; j++) {
-    //     collision = Matter.SAT.collides(triggerBalls[i].getBody(), regularBallBodies[j]);
-    //     if (collision.collided) {
-	    
-    //         cur_time = Date.now();
-    //         if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
-    //             regBall = regularBalls[collision.bodyB.p5id];
-    //             triggerBalls[i].playSound(regBall.getPitch());
-    //             color_id = (color_id + 1) % TOTAL_COLORS;
-    //             //console.log(cur_time - regularBalls[j].lastHitTime);
-    //             regularBalls[j].setLastHitTime(cur_time);
-    //         }
-    //         else{
-    //             //console.log(cur_time - regularBalls[j].lastHitTime);
-    //             regularBalls[j].setLastHitTime(cur_time);
-    //         }
-    //     }
-        
-    // }
+    let trigBalls = ballSystem.getTriggerBalls();
+    let regBalls = ballSystem.getRegularBalls();    
+
+    ballSystem.detectCollisions();
+    
 }
 
 

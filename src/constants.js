@@ -1,7 +1,7 @@
-const NUM_REG_BALLS = 5;
-const NUM_TRIG_BALLS = 1;
-const MAX_REG_BALLS = 10;
-const MAX_TRIG_BALLS = 5;
+const NUM_REG_BALLS = 10;
+const NUM_TRIG_BALLS = 3;
+const MAX_REG_BALLS = 100;
+const MAX_TRIG_BALLS = 50;
 
 const NOTE_DURATION = 0.5;
 
