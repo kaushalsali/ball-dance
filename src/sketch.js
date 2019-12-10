@@ -71,26 +71,7 @@ function setup() {
     });
     World.add(engine.world, mouseConstraint);
 
-    Events.on(mouseConstraint, 'mousedown', function(event) {
-        var mousePosition = event.mouse.position;
-        // console.log('mousedown', mousePosition);
-    });
-
-    Events.on(mouseConstraint, 'mouseup', function(event) {
-        var mousePosition = event.mouse.position;
-        // console.log('mouseup', mousePosition);
-    });
-
-    // an example of using mouse events on a mouse
-    Events.on(mouseConstraint, 'startdrag', function(event) {
-        // console.log('startdrag', event);
-    });
-
-    // an example of using mouse events on a mouse
-    Events.on(mouseConstraint, 'enddrag', function(event) {
-        // console.log('enddrag', event);
-    });
-    
+   
 
 
     document.addEventListener('keydown', function(event) {
@@ -100,28 +81,28 @@ function setup() {
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0.05), y:random(-0.05, 0.05)});
             }
         }
-        if(event.keyCode == 38) {
+        if(event.keyCode == 38) { // up
             for (let i=0; i < cur_num_trig_balls; i++) {
                 let ball = triggerBalls[i].getBody()
-                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:0, y:random(-0.05, 0)});
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: -0.05});
             }
         }
-        if(event.keyCode == 40) {
+        if(event.keyCode == 40) { // down
             for (let i=0; i < cur_num_trig_balls; i++) {
                 let ball = triggerBalls[i].getBody()
-                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:0, y:random(0, 0.05)});
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: 0.05});
             }
         }
-        if(event.keyCode == 37) {
+        if(event.keyCode == 37) { // left
             for (let i=0; i < cur_num_trig_balls; i++) {
                 let ball = triggerBalls[i].getBody()
-                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.05, 0), y:0});
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: -0.05, y: 0});
             }
         }
-        if(event.keyCode == 39) {
+        if(event.keyCode == 39) { // right
             for (let i=0; i < cur_num_trig_balls; i++) {
                 let ball = triggerBalls[i].getBody()
-                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(0, 0.05), y:0});
+                Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0.05, y: 0});
             }
         }
         if(event.keyCode == 32) {
