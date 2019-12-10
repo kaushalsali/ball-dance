@@ -160,7 +160,7 @@ class Ball {
 	this.alpha = 255;
 
 	// Lifespan
-	this.maxLife = random(100,500);
+	this.maxLife = random(20,200);
 	this.life = this.maxLife;
     }
 
