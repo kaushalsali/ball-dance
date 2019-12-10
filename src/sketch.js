@@ -168,6 +168,8 @@ function draw() {
     ballSystem.updateAndDrawTriggerBalls();
     ballSystem.updateAndDrawRegularBalls();
 
+    ballSystem.computeShakeness();
+
 
 }
 

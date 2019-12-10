@@ -108,6 +108,23 @@ class BallSystem {
 	}
     }
 
+    computeShakeness() {
+    let maxShakeness = 0;
+    for (let i=0; i < this.triggerBalls.length; i++) {
+    	let tmpShakeness = this.triggerBalls[i].calcAgeEffect();
+    	if (tmpShakeness > maxShakeness)
+    		maxShakeness = tmpShakeness;
+    }
+    for (let i=0; i < this.regularBalls.length; i++) {
+    	let tmpShakeness = this.regularBalls[i].calcAgeEffect();
+    	if (tmpShakeness > maxShakeness)
+    		maxShakeness = tmpShakeness;
+    }
+    maxShakeness *= 10;
+    let msg = str(60) + ' ' + str(maxShakeness);
+    SendMessage('/shaking', msg);
+    }
+
 
 
     detectCollisions() {	
