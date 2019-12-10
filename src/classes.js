@@ -29,8 +29,7 @@ class Ball {
 		this.color = this.colors[color_id];
 		this.alpha = 255;
 
-		this.isExplode = false;
-		this.dots = []; // not used
+		this.dots = [];
 
     }
 
@@ -133,6 +132,13 @@ class TriggerBall extends Ball {
 		let msg = str(note) + ' ' + str(radius);
 		SendMessage('/play' + str(this.ins_class), msg);
     }
+    playExplosionSound(){
+    	let p = PITCHES[floor(random(0, 5))] + 60 - this.ins_class * 12;
+    	let msg = str(p) + ' ' + str(this.radius);
+    	//console.log(msg);
+    	//console.log(Math.pow(this.body.velocity.x, 2));
+    	SendMessage('/play' + str(this.ins_class), msg);
+    }
 }
 
 
@@ -152,6 +158,13 @@ class RegularBall extends Ball {
 
     setLastHitTime(newHitTime){
     	this.lastHitTime = newHitTime;
+    }
+
+    playExplosionSound(){
+    	let v = Math.sqrt(Math.pow(this.body.velocity.x, 2) + Math.pow(this.body.velocity.y, 2));
+    	let msg = str(this.pitch) + ' ' + str(this.radius);
+    	//console.log(msg);
+    	SendMessage('/explodeRegular', msg);
     }
     
 }

@@ -233,6 +233,7 @@ function mouseClicked(event){
         let v = createVector(l.x, l.y);
         if (v.dist(mouse) < triggerBalls[i].radius) {
             triggerBalls[i].explode();
+            triggerBalls[i].playExplosionSound();
             Matter.Composite.remove(engine.world, triggerBalls[i].getBody());
             triggerBalls.splice(i, 1);
             cur_num_trig_balls -= 1;
@@ -245,6 +246,7 @@ function mouseClicked(event){
         let v = createVector(l.x, l.y);
         if (v.dist(mouse) < regularBalls[j].radius) {
             regularBalls[j].explode();
+            regularBalls[j].playExplosionSound();
             regularBallBodies.splice(j, 1);
             Matter.Composite.remove(engine.world, regularBalls[j].getBody());
             regularBalls.splice(j, 1);
