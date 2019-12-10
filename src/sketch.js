@@ -147,7 +147,7 @@ function setup() {
             triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, r, TRIG_BALL_COLOR, 30, (event.keyCode+2)%TOTAL_INS)
             World.add(engine.world, triggerBalls[i].getBody());
             cur_num_trig_balls = cur_num_trig_balls + 1;
-            console.log('adding a trigger ball...current num: ' + str(cur_num_trig_balls));
+            //console.log('adding a trigger ball...current num: ' + str(cur_num_trig_balls));
         }
         if (event.keyCode == 82) {
             let i = cur_num_reg_balls;
@@ -157,7 +157,7 @@ function setup() {
             regularBallBodies[i] = regularBalls[i].getBody();
             World.add(engine.world, regularBallBodies[i]);
             cur_num_reg_balls = cur_num_reg_balls + 1;
-            console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
+            //console.log('adding a regular ball...current num: ' + str(cur_num_reg_balls));
         }
     });
     
@@ -194,8 +194,9 @@ function draw() {
                 cur_time = Date.now();
                 if (cur_time - regularBalls[j].lastHitTime > SOUND_INTERVAL){
                     regBall = regularBalls[j];
+                    console.log(regBall);
                     //console.log(regBall.id, j);
-                    triggerBalls[i].playSound(regBall.getPitch());
+                    triggerBalls[i].playSound(regBall.getPitch(), regBall.radius);
                     color_id = (color_id + 1) % TOTAL_COLORS;
                     //console.log(cur_time - regularBalls[j].lastHitTime);
                     regularBalls[j].setLastHitTime(cur_time);

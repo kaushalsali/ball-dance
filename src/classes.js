@@ -110,10 +110,10 @@ class TriggerBall extends Ball {
 		this.synth = synth;
     }
 
-    playSound(note) {
+    playSound(note, radius_sum) {
 		//this.synth.triggerAttackRelease(note, NOTE_DURATION);
 		//console.log("playSound called: " + str(note));
-		let msg = str(note);
+		let msg = str(note) + ' ' + str(radius_sum);
 		SendMessage('/play' + str(this.ins_class), msg);
     }
 }
