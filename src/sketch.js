@@ -136,7 +136,6 @@ function setup() {
         }
 
         if (event.keyCode === 76) { // Key L
-            console.log('aaaa')
             loopMode = !loopMode;
         }
 	
@@ -181,8 +180,7 @@ function draw() {
 
 
     loopTimer += 1
-    if ((loopTimer > 120) && (loopMode == true)) {
-        console.log('asd')        
+    if ((loopTimer > 240) && (loopMode == true)) {       
         let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
                 let ball = trigBalls[i].getBody()

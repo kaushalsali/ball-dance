@@ -68,7 +68,7 @@ class BallSystem {
 	    let r = max(randomGaussian(REG_RANGE[0], REG_RANGE[1]), MIN_R);
 	    x = x || random(r, width-r)
 	    y = y || random(r, height-r)
-	    let ball = new RegularBall(this.regularBalls.length, mouseX, mouseY, r, REG_BALL_COLOR, 15, PITCHES[this.regularBalls.length % 3]);
+	    let ball = new RegularBall(this.regularBalls.length, mouseX, mouseY, r, REG_BALL_COLOR, 15, PITCHES[this.regularBalls.length % TOTAL_PITCHES]);
 	    this.regularBalls.push(ball);
 	    World.add(this.world, ball.getBody());
 	}
@@ -137,7 +137,6 @@ class BallSystem {
 		    let cur_time = Date.now();
 
 		    if (cur_time - regBall.lastHitTime > SOUND_INTERVAL) {	
-		    console.log(regBall);		
 			this.triggerBalls[i].playSound(regBall.getPitch());
 			color_id = (color_id + 1) % TOTAL_COLORS;  // color_id is global
 			regBall.setLastHitTime(cur_time);
