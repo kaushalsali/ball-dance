@@ -130,17 +130,18 @@ class BallSystem {
     detectCollisions() {	
 	for (let i=0; i < this.triggerBalls.length; i++) { 
 	    for (let j=0; j < this.regularBalls.length; j++) {
-		let collision = Matter.SAT.collides(this.triggerBalls[i].getBody(), this.regularBalls[j].getBody());
+		let regBall = this.regularBalls[j];
+		
+		let collision = Matter.SAT.collides(this.triggerBalls[i].getBody(), regBall.getBody());
 		if (collision.collided) {	    
 		    let cur_time = Date.now();
 
-		    if (cur_time - this.regularBalls[j].lastHitTime > SOUND_INTERVAL) {
-			let regBall = this.getRegularBallById(collision.bodyB.p5id);
+		    if (cur_time - regBall.lastHitTime > SOUND_INTERVAL) {			
 			this.triggerBalls[i].playSound(regBall.getPitch());
 			color_id = (color_id + 1) % TOTAL_COLORS;  // color_id is global
 			regBall.setLastHitTime(cur_time);
 		    } else {
-			this.regularBalls[j].setLastHitTime(cur_time);
+			regBall.setLastHitTime(cur_time);
 		    }
 		}
             }
