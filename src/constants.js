@@ -26,3 +26,5 @@ const TRIG_BALL_COLOR = [[218, 182, 200], [211, 165, 55], [184, 66, 77]];
 
 const SOUND_INTERVAL = 200;
 
+const MIN_LIFE = 20;
+const MAX_LIFE = 200;

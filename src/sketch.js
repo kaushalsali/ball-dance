@@ -164,14 +164,10 @@ function draw() {
         ground.draw();
     
     // Draw Balls
+    ballSystem.detectCollisions();
     ballSystem.updateAndDrawTriggerBalls();
     ballSystem.updateAndDrawRegularBalls();
 
-    // Handle Collisions
-    let trigBalls = ballSystem.getTriggerBalls();
-    let regBalls = ballSystem.getRegularBalls();    
-
-    ballSystem.detectCollisions();
 
 }
 
