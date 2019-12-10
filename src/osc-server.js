@@ -22,7 +22,7 @@ function ConnectServer() {
 }
 
 function SendMessage(address, msg) {
-    console.log(address, msg);
+    //console.log(address, msg);
     // send the OSC message to server. (osc.js will convert it to binary packet):
     oscWebSocket.send({
         address: address,

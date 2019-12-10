@@ -1,5 +1,7 @@
-const NUM_REG_BALLS = 5;
-const NUM_TRIG_BALLS = 1;
+const NUM_REG_BALLS = 10;
+const NUM_TRIG_BALLS = 3;
+
+const EXPLODE_DOTS = 20;
 
 const NOTE_DURATION = 0.5;
 
