@@ -28,6 +28,14 @@ class BallSystem {
 	return this.regularBalls.length;
     }
 
+    getTriggerBallById(id) {
+	return this.triggerBalls.find(b => b.getId() === id);
+    }
+
+    getRegularBallById(id) {
+	return this.regularBalls.find(b => b.getId() === id);
+    }
+
     getTriggerBalls() {
 	return this.triggerBalls;
     }
@@ -50,8 +58,8 @@ class BallSystem {
     removeTriggerBall(ball) {
 	let index = this.triggerBalls.findIndex(b => b.getId() === ball.getId())
 	if (index !== -1) {
-	    this.triggerBalls.splice(index, 1);
 	    Matter.Composite.remove(this.world, ball.getBody())
+	    this.triggerBalls.splice(index, 1);
 	}
     }
 
@@ -110,7 +118,7 @@ class BallSystem {
 		    let cur_time = Date.now();
 
 		    if (cur_time - this.regularBalls[j].lastHitTime > SOUND_INTERVAL) {
-			let regBall = this.regularBalls[collision.bodyB.p5id];
+			let regBall = this.getRegularBallById(collision.bodyB.p5id);
 			this.triggerBalls[i].playSound(regBall.getPitch());
 			color_id = (color_id + 1) % TOTAL_COLORS;  // color_id is global
 			regBall.setLastHitTime(cur_time);
@@ -160,7 +168,7 @@ class Ball {
 	this.alpha = 255;
 
 	// Lifespan
-	this.maxLife = random(100,500);
+	this.maxLife = random(10,50);
 	this.life = this.maxLife;
     }
 
@@ -302,7 +310,6 @@ class RegularBall extends Ball {
     }
 
     getPitch() {
-    	//console.log("regular ball get pitch: " + str(this.id) + ' ' + str(this.pitch));
 	return this.pitch;
     }
 
