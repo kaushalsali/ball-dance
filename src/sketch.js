@@ -14,7 +14,6 @@ let canvasHeight = 1080;
 let engine = null;
 let world = null;
 
-
 let ground = null;
 
 let ballSystem = null;
@@ -41,14 +40,12 @@ function setup() {
     //console.log(height, width);
 
     background(BACKGROUND_COLOR[color_id]);
-
     
     // Create Engine
     engine = Engine.create();
     world = engine.world;
     world.gravity.x = 0;
     world.gravity.y = 0;
-
     
     // Create Ground    
     ground = new Ground();
@@ -57,9 +54,7 @@ function setup() {
         World.add(engine.world, surfaceBodies[i]);
 
      // Create Ball System
-    ballSystem = new BallSystem(world, NUM_TRIG_BALLS, NUM_REG_BALLS);
-
-          
+    ballSystem = new BallSystem(world, NUM_TRIG_BALLS, NUM_REG_BALLS);          
     
     // Add mouse control
     let myMouse = Mouse.create(window.canvas);
@@ -68,9 +63,7 @@ function setup() {
     });
     World.add(engine.world, mouseConstraint);
 
-   
-
-
+    // Key Events
     document.addEventListener('keydown', function(event) {
         if(event.keyCode == 70) { // F key
 
@@ -84,8 +77,8 @@ function setup() {
                 let ball = regBalls[i].getBody()
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
             }
-
         }
+	
         if(event.keyCode == 38) { // up
 	    let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
@@ -93,6 +86,7 @@ function setup() {
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: -0.05});
             }
         }
+	
         if(event.keyCode == 40) { // down
 	    let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
@@ -100,6 +94,7 @@ function setup() {
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: 0.05});
             }
         }
+	
         if(event.keyCode == 37) { // left
 	    let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
@@ -107,6 +102,7 @@ function setup() {
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: -0.05, y: 0});
             }
         }
+	
         if(event.keyCode == 39) { // right
 	    let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
@@ -114,6 +110,7 @@ function setup() {
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0.05, y: 0});
             }
         }
+	
         if(event.keyCode == 32) { // space
 	    let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
@@ -126,17 +123,16 @@ function setup() {
                 Matter.Body.setVelocity(ball, {x: 0, y:0});
             }
         }
-        if (event.keyCode >= 49 && event.keyCode <= 51){ //TODO: FIX
-          
-          	ballSystem.addNewTriggerBall();
-
-//            triggerBalls[i] = new TriggerBall(i, mouseX, mouseY, r, TRIG_BALL_COLOR, 30, (event.keyCode+2)%TOTAL_INS)
+	
+        if (event.keyCode >= 49 && event.keyCode <= 51) {
+	    ballSystem.addNewTriggerBall(mouseX, mouseY, (event.keyCode+2)%TOTAL_INS);
 
         }
-        if (event.keyCode == 82) { //TODO: FIX
-//             regularBalls[i] = new RegularBall(i, mouseX, mouseY, r, REG_BALL_COLOR, 15, PITCHES[i%TOTAL_PITCHES]);
-          	ballSystem.addNewRegularBall();
+	
+        if (event.keyCode == 82) {
+            ballSystem.addNewRegularBall(mouseX, mouseY);
         }
+	
     });
     
     // Start Engine
@@ -182,33 +178,27 @@ function draw() {
 
 
 function mouseClicked(event){
+    let mouse = createVector(mouseX, mouseY);
 
-  let mouse = createVector(mouseX, mouseY);
-
+    let triggerBalls = ballSystem.getTriggerBalls();
     for (let i=0; i < triggerBalls.length; i++) {
         let l = triggerBalls[i].getPosition();
         let v = createVector(l.x, l.y);
-        if (v.dist(mouse) < triggerBalls[i].radius) {
+        if (v.dist(mouse) < triggerBalls[i].radius) {	    
             triggerBalls[i].explode();
             triggerBalls[i].playExplosionSound();
-            Matter.Composite.remove(engine.world, triggerBalls[i].getBody());
-            triggerBalls.splice(i, 1);
-            cur_num_trig_balls -= 1;
-            //console.log(dots);
-            //console.log("trigger ball explode, ", mouseX, mouseY);
+	    ballSystem.removeTriggerBall(triggerBalls[i])
         }
     }
-    for (let j=0; j<regularBalls.length; j++) {
+
+    let regularBalls = ballSystem.getRegularBalls();
+    for (let j=0; j < regularBalls.length; j++) {
         let l = regularBalls[j].getPosition();
         let v = createVector(l.x, l.y);
         if (v.dist(mouse) < regularBalls[j].radius) {
             regularBalls[j].explode();
             regularBalls[j].playExplosionSound();
-            regularBallBodies.splice(j, 1);
-            Matter.Composite.remove(engine.world, regularBalls[j].getBody());
-            regularBalls.splice(j, 1);
-            cur_num_reg_balls -= 1;
-            //console.log("regular ball explode, ", mouseX, mouseY);
+	    ballSystem.removeRegularBall(regularBalls[j]);
         }
     }
 }

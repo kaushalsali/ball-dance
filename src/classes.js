@@ -8,15 +8,13 @@ class BallSystem {
 	this.regularBalls = [];
 
 	for (let i=0; i < numTriggerBalls; i++) {
-        let r = randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]);
-        r = max(r, MIN_R);
-        this.triggerBalls[i] = new TriggerBall(i, random(r, width-r), random(r, height-r), r, TRIG_BALL_COLOR, 30, i%TOTAL_INS);
-        World.add(this.world, this.triggerBalls[i].getBody());
+            let r = max(randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]), MIN_R);
+            this.triggerBalls[i] = new TriggerBall(i, random(r, width-r), random(r, height-r), r, TRIG_BALL_COLOR, 30, i%TOTAL_INS);
+            World.add(this.world, this.triggerBalls[i].getBody());
 	}
 	
 	for (let i=0; i<numRegularBalls; i++) {
-      let r = randomGaussian(REG_RANGE[0], REG_RANGE[1]);
-      r = max(r, MIN_R);
+	    let r = max(randomGaussian(REG_RANGE[0], REG_RANGE[1]), MIN_R);
 	    this.regularBalls[i] = new RegularBall(i, random(r, width-r), random(r, height-r), r, REG_BALL_COLOR, 15, PITCHES[i%TOTAL_PITCHES]);;
 	    World.add(this.world, this.regularBalls[i].getBody());
 	}
@@ -38,13 +36,16 @@ class BallSystem {
 	return this.regularBalls;
     }
 
-    addNewTriggerBall() {
+    addNewTriggerBall(x=null, y=null, instrument=null) { // TODO: Factory class for creating balls
 	if (triggerBalls.length < MAX_REG_BALLS) {
-	    let ball = new TriggerBall(triggerBalls.length, mouseX, mouseY, 30, TRIG_BALL_COLOR, 15)
+	    let r = max(randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]), MIN_R);
+	    x = x || random(r, width-r)
+	    y = y || random(r, height-r)
+	    instrument = instrument || random(0,2)	    
+	    let ball = new TriggerBall(this.triggerBalls.length, x, y, r, TRIG_BALL_COLOR, 15, instrument)	    
 	    this.triggerBalls.push(ball);
 	    World.add(this.world, ball.getBody());
 	}
-
     }
     
     removeTriggerBall(ball) {
@@ -55,9 +56,12 @@ class BallSystem {
 	}
     }
 
-    addNewRegularBall() {
-	if (regularBalls.length < MAX_REG_BALLS) {	    
-	    let ball = new RegularBall(this.regularBalls.length, mouseX, mouseY, 30, REG_BALL_COLOR, 15, PITCHES[this.regularBalls.length % 3]);
+    addNewRegularBall(x=null, y=null) {
+	if (regularBalls.length < MAX_REG_BALLS) {
+	    let r = max(randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]), MIN_R);
+	    x = x || random(r, width-r)
+	    y = y || random(r, height-r)
+	    let ball = new RegularBall(this.regularBalls.length, mouseX, mouseY, r, REG_BALL_COLOR, 15, PITCHES[this.regularBalls.length % 3]);
 	    this.regularBalls.push(ball);
 	    World.add(this.world, ball.getBody());
 	}
@@ -76,8 +80,11 @@ class BallSystem {
             let ball = this.triggerBalls[i]
 	    ball.draw();
             ball.update();
-	    if (ball.isDead())
+	    if (ball.isDead()) {
+		ball.explode();
+		ball.playExplosionSound();
 		this.removeTriggerBall(ball);
+	    }
 	}
     }
 
@@ -86,10 +93,14 @@ class BallSystem {
 	    let ball = this.regularBalls[i];
 	    ball.draw();
             ball.update();
-	    if (ball.isDead())
+	    if (ball.isDead()) {
+		ball.explode();
+		ball.playExplosionSound();
 		this.removeRegularBall(ball);
+	    }
 	}
     }
+
 
 
     detectCollisions() {	
@@ -105,7 +116,6 @@ class BallSystem {
 			color_id = (color_id + 1) % TOTAL_COLORS;  // color_id is global
 			regBall.setLastHitTime(cur_time);
 		    } else {
-			//console.log(cur_time -this.regularBalls[j].lastHitTime);
 			this.regularBalls[j].setLastHitTime(cur_time);
 		    }
 		}
@@ -143,7 +153,7 @@ class Ball {
 	this.minTrailRadius = radius / 2;
 	this.trailHistory.push(this.getPosition());
       
-  this.dots = [];
+	this.dots = [];
 
 	//Colours
 	this.colors = colors;	
@@ -182,7 +192,7 @@ class Ball {
     }
 
     calcAgeEffect() {
-	return ((this.maxLife - this.life) / this.maxLife) * 10
+	return ((this.maxLife - this.life) / this.maxLife) * 10;
     }
 
 
@@ -193,7 +203,9 @@ class Ball {
 	    return false;
     }
 
-    deathSequence() {}
+    deathSequence() {
+	
+    }
 
     
     update() {	
@@ -204,7 +216,7 @@ class Ball {
 	if (this.trailHistory.length > this.trailLength)
 	    this.trailHistory.shift();
 			
-	this.life -= 0.01;
+	this.life -= 0.1;
 
 	if (this.life <= 0) {
 	    this.deathSequence();
@@ -237,7 +249,6 @@ class Ball {
 	    let ageEffect = this.calcAgeEffect()
 	    translate(this.trailHistory[i].x + random(-ageEffect, ageEffect), this.trailHistory[i].y + random(-ageEffect, ageEffect));
 
-	    // rotate(angle);	    
 	    //let strokeWidth = 4;
 	    //strokeWeight( (((this.trailHistory.length-1-i) / (this.trailHistory.length-1-i)) - 1) * -strokeWidth );
 	    //noStroke();
@@ -265,37 +276,35 @@ class TriggerBall extends Ball {
 		this.ins_class = ins_class;
     }
 
-    setSynth(synth) {
-	this.synth = synth;
-    }
 
     deathSequence() {
 	// console.log('trig dead', this);
     }
+    
     playSound(note, radius) {
-		let msg = str(note) + ' ' + str(radius);
-		SendMessage('/play' + str(this.ins_class), msg);
+	let msg = str(note) + ' ' + str(radius);
+	SendMessage('/play' + str(this.ins_class), msg);
     }
 
-      playExplosionSound() {
+    playExplosionSound() {
     	let p = PITCHES[floor(random(0, 5))] + 60 - this.ins_class * 12;
     	let msg = str(p) + ' ' + str(this.radius);
     	SendMessage('/play' + str(this.ins_class), msg);
-      }    
+    }    
 }
 
 
 class RegularBall extends Ball {
 
     constructor(id, startX, startY, radius, colors, trailLength=0, pitch) {
-		super(id, startX, startY, radius, colors, trailLength, color);
-		this.pitch = pitch;
-		this.lastHitTime = Date.now();
+	super(id, startX, startY, radius, colors, trailLength, color);
+	this.pitch = pitch;
+	this.lastHitTime = Date.now();
     }
 
     getPitch() {
     	//console.log("regular ball get pitch: " + str(this.id) + ' ' + str(this.pitch));
-		return this.pitch;
+	return this.pitch;
     }
 
     setLastHitTime(newHitTime){
@@ -305,7 +314,6 @@ class RegularBall extends Ball {
     playExplosionSound(){
     	let v = Math.sqrt(Math.pow(this.body.velocity.x, 2) + Math.pow(this.body.velocity.y, 2));
     	let msg = str(this.pitch) + ' ' + str(this.radius);
-    	//console.log(msg);
     	SendMessage('/explodeRegular', msg);
     }
     
