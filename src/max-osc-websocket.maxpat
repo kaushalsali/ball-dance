@@ -45,7 +45,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 1413.666670083999634, 789.0, 97.0, 22.0 ],
-					"text" : "scale 0 100 0 50"
+					"text" : "scale 0 100 0 70"
 				}
 
 			}
@@ -1145,6 +1145,8 @@
 					"saved_object_attributes" : 					{
 						"autostart" : 0,
 						"defer" : 0,
+						"node_bin_path" : "",
+						"npm_bin_path" : "",
 						"watch" : 0
 					}
 ,
