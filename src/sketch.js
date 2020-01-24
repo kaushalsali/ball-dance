@@ -36,7 +36,7 @@ function setup() {
     
     let myCanvas = createCanvas(canvasWidth, canvasHeight);
     resizeCanvas(window.innerWidth, window.innerHeight);
-    myCanvas.parent('canvas-container')
+    myCanvas.parent('canvas-container');
     
     //console.log(window.innerHeight, window.innerHeight);
     //console.log(height, width);
@@ -51,7 +51,7 @@ function setup() {
     
     // Create Ground    
     ground = new Ground();
-    let surfaceBodies = ground.getSurfaceBodies()
+    let surfaceBodies = ground.getSurfaceBodies();
     for (let i=0; i<ground.getNumSurfaces(); i++)   
         World.add(engine.world, surfaceBodies[i]);
 
@@ -67,71 +67,69 @@ function setup() {
 
     // Key Events
     document.addEventListener('keydown', function(event) {
-        if(event.keyCode == 70) { // F key
-
-	    let trigBalls = ballSystem.getTriggerBalls();
+        if(event.keyCode === 70) { // F key
+            let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
-                let ball = trigBalls[i].getBody()
+                let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
             }
-	    let regBalls = ballSystem.getRegularBalls();
+            let regBalls = ballSystem.getRegularBalls();
             for (let i=0; i < regBalls.length; i++) {
-                let ball = regBalls[i].getBody()
+                let ball = regBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
             }
         }
 	
-        if(event.keyCode == 38) { // up
-	    let trigBalls = ballSystem.getTriggerBalls();
+        if(event.keyCode === 38) { // up
+            let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
                 let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: -0.05});
             }
         }
 	
-        if(event.keyCode == 40) { // down
-	    let trigBalls = ballSystem.getTriggerBalls();
+        if(event.keyCode === 40) { // down
+            let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
                 let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0, y: 0.05});
             }
         }
 	
-        if(event.keyCode == 37) { // left
-	    let trigBalls = ballSystem.getTriggerBalls();
+        if(event.keyCode === 37) { // left
+            let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
                 let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: -0.05, y: 0});
             }
         }
 	
-        if(event.keyCode == 39) { // right
-	    let trigBalls = ballSystem.getTriggerBalls();
+        if(event.keyCode === 39) { // right
+            let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
                 let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x: 0.05, y: 0});
             }
         }
 	
-        if(event.keyCode == 32) { // space
-	    let trigBalls = ballSystem.getTriggerBalls();
+        if(event.keyCode === 32) { // space
+            let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
-                let ball = trigBalls[i].getBody()
+                let ball = trigBalls[i].getBody();
                 Matter.Body.setVelocity(ball, {x: 0, y:0});
             }
-	    let regBalls = ballSystem.getRegularBalls();
+            let regBalls = ballSystem.getRegularBalls();
             for (let i=0; i < regBalls.length; i++) {
-                let ball = regBalls[i].getBody()
+                let ball = regBalls[i].getBody();
                 Matter.Body.setVelocity(ball, {x: 0, y:0});
             }
         }
 	
         if (event.keyCode >= 49 && event.keyCode <= 51) {
-	    ballSystem.addNewTriggerBall(mouseX, mouseY, (event.keyCode+2)%TOTAL_INS);
-
+	        ballSystem.addNewTriggerBall(mouseX, mouseY, (event.keyCode+2)%TOTAL_INS);
         }
 	
-        if (event.keyCode == 82) {
+        if (event.keyCode === 82) {
             ballSystem.addNewRegularBall(mouseX, mouseY);
         }
 
@@ -148,14 +146,11 @@ function setup() {
 
 function draw() {
 
-
-
     Matter.Engine.update(engine);
 
     // Draw background
     background(BACKGROUND_COLOR[color_id]);
-        
-    
+
     // Draw dots
     //console.log(dots.length, "before");
     for (let i = 0; i < dots.length; i++) {
@@ -178,7 +173,6 @@ function draw() {
 
     ballSystem.computeShakeness();
 
-
     loopTimer += 1;
     if ((loopMode) && (loopTimer > 240)) {
         let numRegBalls = ballSystem.getNumRegularBalls();
@@ -195,20 +189,18 @@ function draw() {
             }
             console.log(5 - numTrigBalls +" trig balls added")
         }
-
         let trigBalls = ballSystem.getTriggerBalls();
             for (let i=0; i < trigBalls.length; i++) {
-                let ball = trigBalls[i].getBody()
+                let ball = trigBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
             }
         let regBalls = ballSystem.getRegularBalls();
             for (let i=0; i < regBalls.length; i++) {
-                let ball = regBalls[i].getBody()
+                let ball = regBalls[i].getBody();
                 Matter.Body.applyForce(ball, {x: ball.position.x, y: ball.position.y}, {x:random(-0.1, 0.1), y:random(-0.05, 0.05)});
             }
         loopTimer = 0;
     }
-
 
 }
 
