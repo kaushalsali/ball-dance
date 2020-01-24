@@ -28,6 +28,10 @@ class BallSystem {
 	return this.regularBalls.length;
     }
 
+    getTotalNumBalls() {
+        return this.regularBalls.length + this.triggerBalls.length;
+    }
+
     getTriggerBallById(id) {
 	return this.triggerBalls.find(b => b.getId() === id);
     }
@@ -44,7 +48,8 @@ class BallSystem {
 	return this.regularBalls;
     }
 
-    addNewTriggerBall(x=null, y=null, instrument=random(0,2)) { // TODO: Factory class for creating balls
+    addNewTriggerBall(x=null, y=null, instrument=Math.floor(random(0, TOTAL_INS))) {
+        console.log(instrument);
 	if (triggerBalls.length < MAX_REG_BALLS) {
 	    let r = max(randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]), MIN_R);
 	    x = x || random(r, width-r)
