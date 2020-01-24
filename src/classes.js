@@ -256,30 +256,21 @@ class Ball {
     }
     
     draw() {
-
 		for (let i=0; i<this.trailHistory.length; i++) {
-
 			push();
 
 			let ageEffect = this.calcAgeEffect();
 			translate(this.trailHistory[i].x + random(-ageEffect, ageEffect), this.trailHistory[i].y + random(-ageEffect, ageEffect));
-
-			//let strokeWidth = 4;
-			//strokeWeight( (((this.trailHistory.length-1-i) / (this.trailHistory.length-1-i)) - 1) * -strokeWidth );
-			//noStroke();
 
 			let c = color(this.color[0], this.color[1], this.color[2], this.calcTrailAlpha(i));
 			fill(c);
 
 			ellipseMode(RADIUS);
 			ellipse(0, 0,  this.calcTrailRadius(i));
-			// ellipse(0, 0, random(this.radius-0.5, this.radius+0.5), random(this.radius-0.5, this.radius+0.5)
 
 			pop();
-			// console.log(this.trailHistory[i]);
 		}
-	// console.log("---");
-    }     
+    }
 }
 
 
@@ -309,9 +300,7 @@ class TriggerBall extends Ball {
     }
 
 	draw() {
-
 		for (let i=0; i<this.trailHistory.length; i++) {
-
 			push();
 
 			let ageEffect = this.calcAgeEffect();
@@ -338,7 +327,6 @@ class TriggerBall extends Ball {
 
 			pop();
 		}
-
 	}
 
 }
