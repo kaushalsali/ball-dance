@@ -307,6 +307,40 @@ class TriggerBall extends Ball {
     	let msg = str(p) + ' ' + str(this.radius);
     	SendMessage('/play' + str(this.ins_class), msg);
     }
+
+	draw() {
+
+		for (let i=0; i<this.trailHistory.length; i++) {
+
+			push();
+
+			let ageEffect = this.calcAgeEffect();
+			translate(this.trailHistory[i].x + random(-ageEffect, ageEffect), this.trailHistory[i].y + random(-ageEffect, ageEffect));
+
+			let alpha = this.calcTrailAlpha(i);
+			let c = color(this.color[0], this.color[1], this.color[2], alpha);
+			fill(c);
+
+			ellipseMode(RADIUS);
+			ellipse(0, 0,  this.calcTrailRadius(i));
+
+			if (this.ins_class >= 1) {
+				let c = color(this.color[0] + 20, this.color[1] + 20, this.color[2] + 20, alpha);
+				fill(c);
+				ellipse(0, 0,  2 * this.calcTrailRadius(i) / 3);
+
+				if (this.ins_class === 2) {
+					let c = color(this.color[0] + 60, this.color[1] + 60, this.color[2] + 60, alpha);
+					fill(c);
+					ellipse(0, 0,  this.calcTrailRadius(i) / 3);
+				}
+			}
+
+			pop();
+		}
+
+	}
+
 }
 
 
