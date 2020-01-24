@@ -423,34 +423,36 @@ class Dot {
 class Ground {
     
     constructor() {
-	let thickness = 100;
-	this.surfaces = [];
-	
-	let options = {
-	    isStatic: true,
-	    restitution: 0,
-	    friction: 0.8
-	}; 	
-	this.surfaces[0] = new Surface(width/2, height, width, thickness, options);
-	this.surfaces[1] = new Surface(0, height/2, thickness, height, options);
-	this.surfaces[2] = new Surface(width/2, 0, width, thickness, options);
-	this.surfaces[3] = new Surface(width, height/2, thickness, height, options);
+        let thickness = 100;
+        this.surfaces = [];
+
+        let options = {
+            isStatic: true,
+            restitution: 0,
+            friction: 0.8
+        };
+        this.surfaces[0] = new Surface(width/2, height, width, thickness, options);
+        this.surfaces[1] = new Surface(0, height/2, thickness, height, options);
+        this.surfaces[2] = new Surface(width/2, 0, width, thickness, options);
+        this.surfaces[3] = new Surface(width, height/2, thickness, height, options);
+
+        this.surfaces[3] = new Surface(width, height/2, thickness, height, options);
     }
     
     getNumSurfaces() {
-	return this.surfaces.length;
+	    return this.surfaces.length;
     }
     
     getSurfaceBodies() {
-	let bodies = [];
-	for (let i=0; i<this.surfaces.length; i++)
-	    bodies.push(this.surfaces[i].getBody());
-	return bodies
+        let bodies = [];
+        for (let i=0; i<this.surfaces.length; i++)
+            bodies.push(this.surfaces[i].getBody());
+        return bodies
     }
 
     draw() {	
-	for (let i=0; i<4; i++)
-	    this.surfaces[i].draw();
+        for (let i=0; i<4; i++)
+            this.surfaces[i].draw();
     }
 }
 
