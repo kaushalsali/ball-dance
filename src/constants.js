@@ -28,3 +28,9 @@ const SOUND_INTERVAL = 200;
 
 const MIN_LIFE = 20;
 const MAX_LIFE = 200;
+
+const LOOP_INTERVAL = 240;  //milliseconds
+const LOOP_MIN_REG_BALLS = 5;
+const LOOP_MIN_TRIG_BALLS = 3;
+const LOOP_NUM_REG_BALLS_TO_ADD= 2;
+const LOOP_NUM_TRIG_BALLS_TO_ADD= 3;
