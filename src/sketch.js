@@ -216,7 +216,7 @@ function mouseClicked(event){
         if (v.dist(mouse) < triggerBalls[i].radius) {	    
             triggerBalls[i].explode();
             triggerBalls[i].playExplosionSound();
-	    ballSystem.removeTriggerBall(triggerBalls[i])
+	    ballSystem.removeTriggerBall(triggerBalls[i]);
         }
     }
 
