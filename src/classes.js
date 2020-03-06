@@ -6,6 +6,8 @@ class BallSystem {
 	this.world = world
 	this.triggerBalls = [];
 	this.regularBalls = [];
+	this.garbageTriggerBalls = [];
+	this.garbageRegularBalls = [];
 
 	for (let i=0; i < numTriggerBalls; i++) {
             let r = max(randomGaussian(TRIG_RANGE[0], TRIG_RANGE[1]), MIN_R);
@@ -58,8 +60,9 @@ class BallSystem {
     removeTriggerBall(ball) {
 		let index = this.triggerBalls.findIndex(b => b.getId() === ball.getId());
 		if (index !== -1) {
-			Matter.Composite.remove(this.world, ball.getBody());
-			this.triggerBalls.splice(index, 1);
+			Matter.Composite.remove(this.world, ball.getBody());	// remove from world
+			// will be removed from this.triggerBalls in cleanTriggerBall()
+			this.garbageTriggerBalls.push(index);
 		}
     }
 
@@ -77,12 +80,14 @@ class BallSystem {
     removeRegularBall(ball) {
 		let index = this.regularBalls.findIndex(b => b.getId() === ball.getId());
 		if (index !== -1) {
-			Matter.Composite.remove(this.world, ball.getBody());
-			this.regularBalls.splice(index, 1);
+			Matter.Composite.remove(this.world, ball.getBody());	// remove from world
+			// will be removed from this.regularBalls in cleanRegularBall()
+			this.garbageRegularBalls.push(index);
 		}
     }
 
     updateAndDrawTriggerBalls() {
+    	this.cleanTriggerGarbage();	// garbage collected here
 		for (let i=0; i < this.triggerBalls.length; i++) {
 				let ball = this.triggerBalls[i];
 			ball.draw();
@@ -96,6 +101,7 @@ class BallSystem {
     }
 
     updateAndDrawRegularBalls() {
+    	this.cleanRegularGarbage();	// garbage collected here
 		for (let i=0; i < this.regularBalls.length; i++) {
 			let ball = this.regularBalls[i];
 			ball.draw();
@@ -106,6 +112,30 @@ class BallSystem {
 				this.removeRegularBall(ball);
 			}
 		}
+    }
+
+    cleanRegularGarbage() {
+    	// remove in descending order
+		this.garbageRegularBalls.sort(function(a, b){return b-a});
+
+		for (let i=0; i < this.garbageRegularBalls.length; i++){
+			let index = this.garbageRegularBalls[i];
+			this.regularBalls.splice(index, 1);
+		}
+
+		this.garbageRegularBalls = [];
+    }
+
+    cleanTriggerGarbage() {
+    	// remove in descending order
+    	this.garbageTriggerBalls.sort(function(a, b){return b-a});
+
+		for (let i=0; i < this.garbageTriggerBalls.length; i++){
+			let index = this.garbageTriggerBalls[i];
+			this.triggerBalls.splice(index, 1);
+		}
+
+    	this.garbageTriggerBalls = [];
     }
 
     computeShakeness() {
