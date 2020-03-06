@@ -174,17 +174,17 @@ function draw() {
     ballSystem.computeShakeness();
 
     loopTimer += 1;
-    if ((loopMode) && (loopTimer > 240)) {
+    if ((loopMode) && (loopTimer > LOOP_INTERVAL)) {
         let numRegBalls = ballSystem.getNumRegularBalls();
         let numTrigBalls = ballSystem.getNumTriggerBalls();
-        if (numRegBalls < 5) {
-            for (let i=0; i < 2; i++) {
+        if (numRegBalls < LOOP_MIN_REG_BALLS) {
+            for (let i=0; i < LOOP_NUM_REG_BALLS_TO_ADD; i++) {
                 ballSystem.addNewRegularBall(random(0, width), random(0, height));
             }
             console.log(5 - numRegBalls +" reg balls added")
         }
-        if (numTrigBalls < 10) {
-            for (let i=0; i < 3; i++) {
+        if (numTrigBalls < LOOP_MIN_TRIG_BALLS) {
+            for (let i=0; i < LOOP_NUM_TRIG_BALLS_TO_ADD; i++) {
                 ballSystem.addNewTriggerBall(random(0, width), random(0, height));
             }
             console.log(5 - numTrigBalls +" trig balls added")
