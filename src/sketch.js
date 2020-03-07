@@ -30,16 +30,30 @@ let color_id = 0;
 let loopTimer = 0;
 let loopMode = false;
 
+
 function setup() {
 
     ConnectServer();
-    
+
+    // Create Canvas
     let myCanvas = createCanvas(canvasWidth, canvasHeight);
     resizeCanvas(window.innerWidth, window.innerHeight);
     myCanvas.parent('canvas-container');
-    
-    //console.log(window.innerHeight, window.innerHeight);
-    //console.log(height, width);
+
+    // Setup Help image
+    let helpImg = document.getElementById("help-img");
+    helpImg.style.opacity = "0";
+    helpImg.style.transition = "opacity 1s";
+    helpImg.style.height = height + "px";
+    document.getElementById("help-div").style.width = width + "px";
+
+    // Setup Help Button
+    btnShowHelp = createButton('Help');
+    btnShowHelp.position(width/2 - 50, height-42);
+    btnShowHelp.addClass("myButton");
+    // btnShowHelp.style("background-color", color(10,10,10));
+    // btnShowHelp.style("color", color(210,210,210));
+    btnShowHelp.mousePressed(btnShowHelpClicked);
 
     background(BACKGROUND_COLOR[color_id]);
     
@@ -65,7 +79,7 @@ function setup() {
     });
     World.add(engine.world, mouseConstraint);
 
-    // Key Events
+    // Setup Key Events
     document.addEventListener('keydown', function(event) {
         if(event.keyCode === 70) { // F key
             let trigBalls = ballSystem.getTriggerBalls();
@@ -229,5 +243,17 @@ function mouseClicked(event){
             regularBalls[j].playExplosionSound();
 	    ballSystem.removeRegularBall(regularBalls[j]);
         }
+    }
+}
+
+
+function btnShowHelpClicked() {
+    let help = document.getElementById("help-img");
+    console.log(help.style.opacity);
+    if (help.style.opacity <= 0) {
+        help.style.opacity = "100";
+    }
+    else {
+        help.style.opacity = "0"
     }
 }
