@@ -41,9 +41,10 @@ function setup() {
     myCanvas.parent('canvas-container');
 
     // Setup Help image
-    document.getElementById("help-img").style.opacity = "0";
-    document.getElementById("help-img").style.transition = "opacity 1s";
-    document.getElementById("help-img").style.height = height + "px";
+    let helpImg = document.getElementById("help-img");
+    helpImg.style.opacity = "0";
+    helpImg.style.transition = "opacity 1s";
+    helpImg.style.height = height + "px";
     document.getElementById("help-div").style.width = width + "px";
 
     // Setup Help Button
@@ -250,9 +251,9 @@ function btnShowHelpClicked() {
     let help = document.getElementById("help-img");
     console.log(help.style.opacity);
     if (help.style.opacity <= 0) {
-        console.log("help.style.opacity");
         help.style.opacity = "100";
     }
-    else
+    else {
         help.style.opacity = "0"
+    }
 }
