@@ -458,8 +458,6 @@ class Ground {
         this.surfaces[1] = new Surface(0, height/2, thickness, height, options);
         this.surfaces[2] = new Surface(width/2, 0, width, thickness, options);
         this.surfaces[3] = new Surface(width, height/2, thickness, height, options);
-
-        this.surfaces[3] = new Surface(width, height/2, thickness, height, options);
     }
     
     getNumSurfaces() {
@@ -490,7 +488,7 @@ class Surface {
     }
 
     getBody() {
-		return this.body
+		return this.body;
     }
     
     draw() {
