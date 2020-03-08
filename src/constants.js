@@ -13,7 +13,7 @@ const TOTAL_PITCHES = 6;
 const PITCHES = [60, 64, 67, 62, 65, 72];
 
 const TRIG_RANGE = [40, 10];
-const REG_RANGE = [30, 15];
+const REG_RANGE = [40, 15];
 const MIN_R = 15;
 
 // Colors
@@ -30,7 +30,7 @@ const MIN_LIFE = 20;
 const MAX_LIFE = 200;
 
 const LOOP_INTERVAL = 240;  //milliseconds
-const LOOP_MIN_REG_BALLS = 5;
+const LOOP_MIN_REG_BALLS = 8;
 const LOOP_MIN_TRIG_BALLS = 6;
-const LOOP_NUM_REG_BALLS_TO_ADD= 5;
-const LOOP_NUM_TRIG_BALLS_TO_ADD= 8;
+const LOOP_NUM_REG_BALLS_TO_ADD= 8;
+const LOOP_NUM_TRIG_BALLS_TO_ADD= 6;
